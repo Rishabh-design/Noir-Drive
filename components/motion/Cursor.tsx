@@ -20,10 +20,11 @@ export default function Cursor() {
     if (!fine || !dot.current || !ring.current) return;
     document.documentElement.classList.add('has-cursor');
 
-    const dx = gsap.quickTo(dot.current, 'x', { duration: 0.12, ease: 'power3.out' });
-    const dy = gsap.quickTo(dot.current, 'y', { duration: 0.12, ease: 'power3.out' });
-    const rx = gsap.quickTo(ring.current, 'x', { duration: 0.55, ease: 'power3.out' });
-    const ry = gsap.quickTo(ring.current, 'y', { duration: 0.55, ease: 'power3.out' });
+    // The dot is pinned to the pointer (no lag); the ring trails just enough to feel fluid.
+    const dx = gsap.quickSetter(dot.current, 'x', 'px');
+    const dy = gsap.quickSetter(dot.current, 'y', 'px');
+    const rx = gsap.quickTo(ring.current, 'x', { duration: 0.16, ease: 'power2.out' });
+    const ry = gsap.quickTo(ring.current, 'y', { duration: 0.16, ease: 'power2.out' });
 
     let shown = false;
     const move = (e: PointerEvent) => {

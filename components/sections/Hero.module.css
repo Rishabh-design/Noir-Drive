@@ -122,17 +122,20 @@
   position: absolute;
   z-index: 2;
   left: 11.2rem;
-  bottom: 14.1rem;
-  width: 89.6rem;
+  bottom: 12.6rem;
+  width: 77.3rem;
   pointer-events: none;
 }
 
+/* Flex column so the line masks' negative margins don't collapse (keeps 108px rhythm). */
 .title {
+  display: flex;
+  flex-direction: column;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 12.8rem;
-  line-height: 10.8rem;
-  letter-spacing: -0.256rem;
+  font-size: 10rem;
+  line-height: 9.1rem;
+  letter-spacing: -0.2rem;
   color: #fff;
 }
 
@@ -276,9 +279,9 @@
   }
 
   .title {
-    font-size: 5.4rem;
-    line-height: 4.8rem;
-    letter-spacing: -0.11rem;
+    font-size: 4rem;
+    line-height: 3.8rem;
+    letter-spacing: -0.08rem;
   }
 
   .lineMask {

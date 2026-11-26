@@ -9,13 +9,19 @@ type Props = {
   left?: Rule;
   right?: Rule;
   tone?: 'light' | 'dark' | 'muted' | 'white';
+  /** Space between rules and label, in design px (Figma varies it per section). */
+  gap?: number;
   className?: string;
 };
 
 /** "——• LABEL •——" kicker that sits above every section title. */
-export default function Eyebrow({ text, left, right, tone = 'dark', className }: Props) {
+export default function Eyebrow({ text, left, right, tone = 'dark', gap, className }: Props) {
   return (
-    <div className={clsx(styles.eyebrow, styles[tone], className)} data-eyebrow>
+    <div
+      className={clsx(styles.eyebrow, styles[tone], className)}
+      style={gap ? { gap: `${gap / 10}rem` } : undefined}
+      data-eyebrow
+    >
       {left && (
         <span className={clsx(styles.line, styles.lineLeft)} data-eyebrow-line>
           <img src={left.src} alt="" className={clsx(left.flip && styles.flip)} />

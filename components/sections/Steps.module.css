@@ -1,4 +1,5 @@
-/* Figma "Frame 32" 184:99 — 1711 wide, padding 87 / 57 / 116, 73px below the stats. */
+/* Figma "Frame 32" 184:99 — 1711 × 1078, 73px below the stats. Its 895px row
+   overflows the 87/116 padding and is centred, so it actually sits 77px down. */
 .steps {
   padding: 7.34rem var(--gutter) 0;
 }
@@ -6,7 +7,7 @@
 .frame {
   display: flex;
   justify-content: center;
-  padding: 8.7rem 5.7rem 11.6rem;
+  padding: 7.7rem 5.7rem 10.6rem;
   border-radius: var(--radius-frame);
   background: #fff;
 }
@@ -26,11 +27,12 @@
 }
 
 .title {
+  width: 63.7rem;
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: 8.1146rem;
-  line-height: 1.23;
-  letter-spacing: -0.16229rem;
+  font-size: 6rem;
+  line-height: 7.4rem;
+  letter-spacing: -0.12rem;
   color: var(--ink-600);
 }
 
@@ -48,13 +50,19 @@
   gap: 2.2229rem;
 }
 
+/* Figma lays the divider out at zero height; the stroke just overhangs. */
 .rule {
+  position: relative;
   display: block;
   width: 100%;
+  height: 0;
   transform-origin: 0 50%;
 }
 
 .rule img {
+  position: absolute;
+  left: 0;
+  top: -0.08rem;
   display: block;
   width: 100%;
   height: auto;
@@ -86,18 +94,23 @@
   text-align: left;
 }
 
+/* 24px rows on a 38px line: closed items 95.3px, open 141.3px, as in Figma. */
 .num,
 .itemTitle {
-  font-size: 2.858rem;
+  font-size: 2.4rem;
   font-weight: 500;
-  line-height: 1.5;
-  letter-spacing: -0.05716rem;
+  line-height: 3.8rem;
+  letter-spacing: -0.048rem;
   color: var(--ink-600);
 }
 
+/* Auto width, as in Figma: titles start 47.6px after their own number. */
 .num {
   flex: none;
-  width: 3.3rem;
+}
+
+.ghost {
+  visibility: hidden;
 }
 
 .itemTitle {
@@ -144,10 +157,15 @@
 
 .body {
   overflow: hidden;
-  padding-left: 8.06rem;
+}
+
+.bodyRow {
+  display: flex;
+  gap: 4.7633rem;
 }
 
 .body p {
+  margin-top: -0.2rem;
   width: 40.5672rem;
   font-size: 1.5878rem;
   font-weight: 300;
@@ -229,7 +247,9 @@
   }
 
   .title {
+    width: auto;
     font-size: 3.4rem;
+    line-height: 4.2rem;
     letter-spacing: -0.06rem;
   }
 
@@ -255,10 +275,7 @@
   .num,
   .itemTitle {
     font-size: 1.8rem;
-  }
-
-  .num {
-    width: 2.4rem;
+    line-height: 2.6rem;
   }
 
   .icon {
@@ -266,8 +283,8 @@
     height: 2.6rem;
   }
 
-  .body {
-    padding-left: 4rem;
+  .bodyRow {
+    gap: 1.6rem;
   }
 
   .body p {

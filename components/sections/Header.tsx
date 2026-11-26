@@ -2,7 +2,7 @@
 
 import { useRef } from 'react';
 import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap';
-import { onIntroDone } from '@/lib/intro';
+import { onHeroCta, onIntroDone } from '@/lib/intro';
 import { nav } from '@/content/site';
 import Magnetic from '@/components/ui/Magnetic';
 import RollText from '@/components/ui/RollText';
@@ -20,10 +20,17 @@ export default function Header() {
     () => {
       const el = root.current!;
       const items = el.querySelectorAll('[data-header-item]');
-      gsap.set(items, { yPercent: -140, opacity: 0 });
+      const cta = el.querySelector('[data-header-cta]');
+      gsap.set(items, { y: -24, opacity: 0 });
+      gsap.set(cta, { scale: 0.6, opacity: 0 });
 
+      // Logo, links and account icon settle in with the hero copy…
       const off = onIntroDone(() => {
-        gsap.to(items, { yPercent: 0, opacity: 1, duration: 1.4, stagger: 0.07, ease: 'noirOut', delay: 0.55 });
+        gsap.to(items, { y: 0, opacity: 1, duration: 1.3, stagger: 0.06, ease: 'power3.out', delay: 0.4 });
+      });
+      // …the "Book Now" pill pops in together with the hero's booking disc.
+      const offCta = onHeroCta(() => {
+        gsap.to(cta, { scale: 1, opacity: 1, duration: 0.9, ease: 'back.out(1.7)', delay: 0.45 });
       });
 
       let hidden = false;
@@ -43,6 +50,7 @@ export default function Header() {
 
       return () => {
         off();
+        offCta();
         st.kill();
       };
     },
@@ -66,7 +74,7 @@ export default function Header() {
 
         <div className={styles.actions}>
           <Magnetic strength={0.25}>
-            <a href="#contact" className={styles.bookNow} data-header-item>
+            <a href="#contact" className={styles.bookNow} data-header-cta>
               <span className={styles.bookLabel}>
                 <RollText>Book Now</RollText>
               </span>

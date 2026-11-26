@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion } from '@/lib/gsap';
 import { testimonials } from '@/content/site';
 import { revealChars, revealEyebrow } from '@/components/motion/reveal';
+import { type Blur, focusPull, setBlur } from '@/components/motion/focusPull';
 import Eyebrow from '@/components/ui/Eyebrow';
 import clsx from '@/lib/clsx';
 import styles from './Testimonials.module.css';
@@ -43,7 +44,8 @@ function slotVars(slot: number) {
     scale: s.s,
     rotate: s.r,
     opacity: s.o,
-    filter: `blur(${((s.blur * unit) / s.s).toFixed(2)}px)`,
+    // CSS blur is applied before the scale, so divide to get the designed on-screen blur.
+    blur: (s.blur * unit) / s.s,
   };
 }
 
@@ -57,12 +59,19 @@ export default function Testimonials() {
   const dealt = useRef(false);
   const auto = useRef<gsap.core.Tween | null>(null);
   const paused = useRef(false);
+  const blurs = useRef<Blur[]>([]);
+  const blurOf = (i: number) => (blurs.current[i] ??= { v: 0 });
 
+  // Settle every card into its slot (resize) — cancels any turn in progress.
   const place = useCallback(() => {
     if (!dealt.current) return;
+    busy.current = false;
     cards.current.forEach((card, i) => {
       const slot = rel(i, activeRef.current);
-      gsap.set(card, { ...slotVars(slot), zIndex: SLOTS[slot].z });
+      const { blur, ...move } = slotVars(slot);
+      gsap.killTweensOf(card);
+      gsap.set(card, { ...move, zIndex: SLOTS[slot].z });
+      setBlur(card, blurOf(i), blur);
     });
   }, []);
 
@@ -75,17 +84,25 @@ export default function Testimonials() {
     setActive(next);
     const reduce = prefersReducedMotion();
     const tl = gsap.timeline({
-      defaults: { duration: reduce ? 0.01 : 1.1, ease: 'noir' },
-      onComplete: () => {
-        busy.current = false;
-      },
+      // overwrite:auto lets a quick next click take over a focus pull still in progress.
+      defaults: { duration: reduce ? 0.01 : 1.25, ease: 'power3.inOut', overwrite: 'auto' },
     });
+    // Unlock as soon as the cards have landed; the blur may still be settling.
+    tl.call(() => {
+      busy.current = false;
+    }, [], reduce ? 0.01 : 1.2);
     cards.current.forEach((card, i) => {
       const from = rel(i, prev);
       const to = rel(i, next);
-      if (Math.abs(to - from) > 1) gsap.set(card, { ...slotVars(to > 0 ? 3 : -3), zIndex: 0 });
-      tl.to(card, { ...slotVars(to) }, 0);
-      tl.set(card, { zIndex: SLOTS[to].z }, reduce ? 0 : 0.4);
+      if (Math.abs(to - from) > 1) {
+        const { blur, ...park } = slotVars(to > 0 ? 3 : -3);
+        gsap.set(card, { ...park, zIndex: 0 });
+        setBlur(card, blurOf(i), blur);
+      }
+      const { blur, ...move } = slotVars(to);
+      tl.to(card, move, 0);
+      focusPull(tl, card, blurOf(i), blur, 0, reduce);
+      tl.set(card, { zIndex: SLOTS[to].z }, reduce ? 0 : 0.5);
     });
   }, []);
 
@@ -153,7 +170,9 @@ export default function Testimonials() {
       // Before the deal: the whole deck waits face-down in the centre slot.
       cards.current.forEach((card, i) => {
         const slot = rel(i, START);
-        gsap.set(card, { ...slotVars(0), yPercent: slotVars(0).yPercent + 30, opacity: 0, zIndex: SLOTS[slot].z });
+        const { blur, ...front } = slotVars(0);
+        gsap.set(card, { ...front, yPercent: front.yPercent + 30, opacity: 0, zIndex: SLOTS[slot].z });
+        setBlur(card, blurOf(i), blur);
       });
 
       const deal = () => {
@@ -165,11 +184,10 @@ export default function Testimonials() {
         });
         cards.current.forEach((card, i) => {
           const slot = rel(i, START);
-          tl.to(
-            card,
-            { ...slotVars(slot), duration: prefersReducedMotion() ? 0.01 : 1.6, ease: 'noirOut' },
-            Math.abs(slot) * 0.12,
-          );
+          const { blur, ...move } = slotVars(slot);
+          const reduce = prefersReducedMotion();
+          tl.to(card, { ...move, duration: reduce ? 0.01 : 1.6, ease: 'power3.out' }, Math.abs(slot) * 0.12);
+          focusPull(tl, card, blurOf(i), blur, Math.abs(slot) * 0.12, reduce);
         });
         gsap.from(q('[data-tm-progress]'), { scaleX: 0, opacity: 0, duration: 1.4, ease: 'noir', delay: 0.5 });
       };
@@ -200,6 +218,7 @@ export default function Testimonials() {
           <Eyebrow
             text={testimonials.eyebrow}
             tone="dark"
+            gap={23.641}
             left={{ src: '/assets/testimonials/eyebrow-line-left.svg' }}
             right={{ src: '/assets/testimonials/eyebrow-line-right.svg', flip: true }}
           />

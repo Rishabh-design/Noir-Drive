@@ -72,8 +72,8 @@ export default function RoadIntro() {
 
           tl.fromTo(
             chars,
-            { opacity: 0.08, yPercent: 18, filter: 'blur(6px)' },
-            { opacity: 1, yPercent: 0, filter: 'blur(0px)', stagger: 0.03, duration: 0.5, ease: 'power1.out' },
+            { opacity: 0.08, yPercent: 18 },
+            { opacity: 1, yPercent: 0, stagger: 0.03, duration: 0.5, ease: 'power1.out' },
             0.1,
           );
 

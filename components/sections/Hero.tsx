@@ -3,39 +3,59 @@
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { gsap, SplitText, useGSAP, prefersReducedMotion } from '@/lib/gsap';
-import { onIntroDone } from '@/lib/intro';
+import { markHeroCta, onIntroDone } from '@/lib/intro';
 import { hero } from '@/content/site';
 import styles from './Hero.module.css';
 
+type Notch = { grow: number; strip: number };
+
 /**
- * Builds the hero's silhouette: a rounded frame with a hole around the CTA
- * circle that runs down into the bottom edge (measured from the Figma
- * "Subtract" layer: ring gap 5.5, strip half-width 110/158 r, fillets 9, corners 24).
+ * The hero's silhouette (Figma "Subtract"): a rounded frame with a hole around
+ * the CTA circle that runs down into the bottom edge. Measured: ring gap 5.5,
+ * strip half-width 110/158 r, fillets 9, corners 24 (design px).
+ *
+ * `grow` (0→1) opens the hole from nothing; `strip` (0→1) then widens its
+ * bottom into the filleted strip. grow = 0 is a plain rounded rectangle.
  */
-function heroPath(w: number, h: number, cx: number, cy: number, r: number, unit: number) {
-  const R = r + 5.5 * unit;
-  const hw = r * (110 / 158);
-  const f = 9 * unit;
+function heroPath(w: number, h: number, cx: number, cy: number, r: number, unit: number, n: Notch) {
+  const p = (v: number) => Math.round(v * 100) / 100;
   const rc = 24 * unit;
+  const rect = [
+    `M0,${p(rc)}`,
+    `A${p(rc)},${p(rc)} 0 0 1 ${p(rc)},0`,
+    `L${p(w - rc)},0`,
+    `A${p(rc)},${p(rc)} 0 0 1 ${p(w)},${p(rc)}`,
+    `L${p(w)},${p(h - rc)}`,
+    `A${p(rc)},${p(rc)} 0 0 1 ${p(w - rc)},${p(h)}`,
+  ];
+  const close = [`L${p(rc)},${p(h)}`, `A${p(rc)},${p(rc)} 0 0 1 0,${p(h - rc)}`, 'Z'];
+  const Rf = r + 5.5 * unit;
+  const R = Rf * Math.max(n.grow, 0);
+
+  if (R < 0.5) return `path('${[...rect, ...close].join(' ')}')`;
+
+  if (n.strip <= 0) {
+    // Plain circular hole (even-odd); anything outside the frame is clipped by overflow anyway.
+    const circle = `M${p(cx - R)},${p(cy)} A${p(R)},${p(R)} 0 1 0 ${p(cx + R)},${p(cy)} A${p(R)},${p(R)} 0 1 0 ${p(cx - R)},${p(cy)} Z`;
+    return `path(evenodd, '${[...rect, ...close].join(' ')} ${circle}')`;
+  }
+
+  // Strip phase: start from the circle's own chord at the bottom edge (zero-length strip)
+  // and widen to the designed half-width, growing the fillets in with it.
+  const chord = Math.sqrt(Math.max(R * R - (h - cy) * (h - cy), 0));
+  const hw = chord + (r * (110 / 158) - chord) * n.strip;
+  const f = 9 * unit * n.strip;
   const yj = cy + Math.sqrt(Math.max(R * R - hw * hw, 0));
-  const n = (v: number) => Math.round(v * 100) / 100;
-  return [
-    `M0,${n(rc)}`,
-    `A${n(rc)},${n(rc)} 0 0 1 ${n(rc)},0`,
-    `L${n(w - rc)},0`,
-    `A${n(rc)},${n(rc)} 0 0 1 ${n(w)},${n(rc)}`,
-    `L${n(w)},${n(h - rc)}`,
-    `A${n(rc)},${n(rc)} 0 0 1 ${n(w - rc)},${n(h)}`,
-    `L${n(cx + hw + f)},${n(h)}`,
-    `A${n(f)},${n(f)} 0 0 1 ${n(cx + hw)},${n(h - f)}`,
-    `L${n(cx + hw)},${n(yj)}`,
-    `A${n(R)},${n(R)} 0 1 0 ${n(cx - hw)},${n(yj)}`,
-    `L${n(cx - hw)},${n(h - f)}`,
-    `A${n(f)},${n(f)} 0 0 1 ${n(cx - hw - f)},${n(h)}`,
-    `L${n(rc)},${n(h)}`,
-    `A${n(rc)},${n(rc)} 0 0 1 0,${n(h - rc)}`,
-    'Z',
-  ].join(' ');
+  return `path('${[
+    ...rect,
+    `L${p(cx + hw + f)},${p(h)}`,
+    `A${p(f)},${p(f)} 0 0 1 ${p(cx + hw)},${p(h - f)}`,
+    `L${p(cx + hw)},${p(yj)}`,
+    `A${p(R)},${p(R)} 0 1 0 ${p(cx - hw)},${p(yj)}`,
+    `L${p(cx - hw)},${p(h - f)}`,
+    `A${p(f)},${p(f)} 0 0 1 ${p(cx - hw - f)},${p(h)}`,
+    ...close,
+  ].join(' ')}')`;
 }
 
 export default function Hero() {
@@ -43,24 +63,22 @@ export default function Hero() {
   const frame = useRef<HTMLDivElement>(null);
   const circle = useRef<HTMLAnchorElement>(null);
   const clip = useRef<HTMLDivElement>(null);
+  const notch = useRef<Notch>({ grow: 0, strip: 0 });
+  const applyNotch = useRef<() => void>(() => {});
 
-  // Keep the cut-out silhouette glued to the CTA circle at every viewport size.
+  // Keep the silhouette glued to the CTA circle at every viewport size.
   useEffect(() => {
     const f = frame.current;
     const c = circle.current;
     const cl = clip.current;
     if (!f || !c || !cl) return;
-    const update = () => {
+    applyNotch.current = () => {
       const unit = parseFloat(getComputedStyle(document.documentElement).fontSize) / 10;
-      const w = f.offsetWidth;
-      const h = f.offsetHeight;
       const r = c.offsetWidth / 2;
-      const cx = c.offsetLeft + r;
-      const cy = c.offsetTop + r;
-      cl.style.clipPath = `path('${heroPath(w, h, cx, cy, r, unit)}')`;
+      cl.style.clipPath = heroPath(f.offsetWidth, f.offsetHeight, c.offsetLeft + r, c.offsetTop + r, r, unit, notch.current);
     };
-    update();
-    const ro = new ResizeObserver(update);
+    applyNotch.current();
+    const ro = new ResizeObserver(() => applyNotch.current());
     ro.observe(f);
     return () => ro.disconnect();
   }, []);
@@ -72,27 +90,51 @@ export default function Hero() {
       const body = q('[data-hero-body]')[0];
       const reduce = prefersReducedMotion();
 
-      // Resting state before the curtain lifts.
-      gsap.set(q('[data-hero-reveal]'), { clipPath: 'inset(100% 0% 0% 0%)' });
-      gsap.set(q('[data-hero-zoom]'), { scale: 1.35 });
-      gsap.set(lines, { yPercent: 115, rotate: 4 });
-      gsap.set(q('[data-hero-circle]'), { scale: 0.3, rotate: -140, opacity: 0 });
-      gsap.set(q('[data-hero-arrow]'), { xPercent: -40, yPercent: 40, opacity: 0 });
-      gsap.set(q('[data-hero-pill]'), { xPercent: 18, opacity: 0 });
-      gsap.set(q('[data-hero-scroll]'), { opacity: 0, y: 20 });
+      // Resting state: a clean, uninterrupted frame; the CTA is not there yet.
+      gsap.set(q('[data-hero-reveal]'), { opacity: 0 });
+      gsap.set(q('[data-hero-zoom]'), { scale: 1.12 });
+      gsap.set(lines, { yPercent: 110 });
+      gsap.set(q('[data-hero-circle]'), { scale: 0, rotate: -60 });
+      gsap.set(q('[data-hero-arrow]'), { xPercent: -35, yPercent: 35, opacity: 0 });
+      gsap.set(q('[data-hero-pill]'), { scale: 0.6, opacity: 0, transformOrigin: '100% 100%' });
+      gsap.set(q('[data-hero-scroll]'), { opacity: 0 });
 
       let split: SplitText | null = null;
       const off = onIntroDone(() => {
         split = SplitText.create(body, { type: 'lines', mask: 'lines', linesClass: 'split-line' });
-        const tl = gsap.timeline({ defaults: { ease: 'noirOut' } });
-        tl.to(q('[data-hero-reveal]'), { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.5, ease: 'noir' }, 0)
-          .to(q('[data-hero-zoom]'), { scale: 1, duration: 2.6, ease: 'expo.out' }, 0.1)
-          .to(lines, { yPercent: 0, rotate: 0, duration: 1.6, stagger: 0.11 }, 0.55)
-          .from(split.lines, { yPercent: 100, opacity: 0, duration: 1.3, stagger: 0.08 }, 0.95)
-          .to(q('[data-hero-circle]'), { scale: 1, rotate: 0, opacity: 1, duration: 1.8 }, 0.85)
-          .to(q('[data-hero-arrow]'), { xPercent: 0, yPercent: 0, opacity: 1, duration: 1.4 }, 1.25)
-          .to(q('[data-hero-pill]'), { xPercent: 0, opacity: 1, duration: 1.3 }, 1.3)
-          .to(q('[data-hero-scroll]'), { opacity: 1, y: 0, duration: 1.2 }, 1.5);
+        const pop = { v: 0 };
+        const tl = gsap.timeline();
+        tl
+          // 1 · the car surfaces inside the full frame — a slow dissolve and settle, no wipes.
+          .to(q('[data-hero-reveal]'), { opacity: 1, duration: 1.6, ease: 'sine.inOut' }, 0)
+          .to(q('[data-hero-zoom]'), { scale: 1, duration: 3, ease: 'power3.out' }, 0)
+          // 2 · the copy
+          .to(lines, { yPercent: 0, duration: 1.5, stagger: 0.1, ease: 'power4.out' }, 0.55)
+          .from(split.lines, { yPercent: 100, opacity: 0, duration: 1.3, stagger: 0.08, ease: 'power3.out' }, 0.95)
+          // 3 · only now the cut-out opens and the disc pops through it
+          .add(() => markHeroCta(), 1.85)
+          .to(
+            pop,
+            {
+              v: 1,
+              duration: 1.1,
+              ease: 'back.out(1.5)',
+              onUpdate: () => {
+                notch.current.grow = pop.v;
+                gsap.set(q('[data-hero-circle]'), { scale: pop.v, rotate: -60 * (1 - pop.v) });
+                applyNotch.current();
+              },
+            },
+            1.85,
+          )
+          .to(
+            notch.current,
+            { strip: 1, duration: 0.55, ease: 'power2.inOut', onUpdate: () => applyNotch.current() },
+            2.8,
+          )
+          .to(q('[data-hero-arrow]'), { xPercent: 0, yPercent: 0, opacity: 1, duration: 0.9, ease: 'power3.out' }, 2.25)
+          .to(q('[data-hero-pill]'), { scale: 1, opacity: 1, duration: 0.9, ease: 'back.out(1.6)' }, 2.35)
+          .to(q('[data-hero-scroll]'), { opacity: 1, duration: 1, ease: 'sine.inOut' }, 2.6);
         if (reduce) tl.progress(1);
       });
 
@@ -100,7 +142,7 @@ export default function Hero() {
 
       // Scroll-out: photo drifts slower than the page, copy lifts away, the frame recedes.
       const out = gsap.timeline({
-        scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true },
+        scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: 0.6 },
         defaults: { ease: 'none' },
       });
       out
@@ -114,9 +156,9 @@ export default function Hero() {
       const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
       let onMove: ((e: PointerEvent) => void) | null = null;
       if (fine) {
-        const px = gsap.quickTo(q('[data-hero-mouse]'), 'xPercent', { duration: 1.6, ease: 'power3.out' });
-        const py = gsap.quickTo(q('[data-hero-mouse]'), 'yPercent', { duration: 1.6, ease: 'power3.out' });
-        const tx = gsap.quickTo(q('[data-hero-copy-mouse]'), 'x', { duration: 1.8, ease: 'power3.out' });
+        const px = gsap.quickTo(q('[data-hero-mouse]'), 'xPercent', { duration: 1.4, ease: 'power3.out' });
+        const py = gsap.quickTo(q('[data-hero-mouse]'), 'yPercent', { duration: 1.4, ease: 'power3.out' });
+        const tx = gsap.quickTo(q('[data-hero-copy-mouse]'), 'x', { duration: 1.6, ease: 'power3.out' });
         onMove = (e: PointerEvent) => {
           const nx = e.clientX / window.innerWidth - 0.5;
           const ny = e.clientY / window.innerHeight - 0.5;

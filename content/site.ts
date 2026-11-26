@@ -10,7 +10,7 @@ export const nav = [
 ];
 
 export const hero = {
-  lines: ['Rent the', 'World’s Most', 'Iconic Cars'],
+  lines: ['Rent the World’s', 'Most Iconic Cars'],
   body: 'Experience the thrill of driving world-class sports and luxury cars without owning them. Choose from Ferraris, Lamborghinis, Rolls-Royce and more.',
   cta: 'Book Your Ride',
 };

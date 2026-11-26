@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { gsap, useGSAP, prefersReducedMotion } from '@/lib/gsap';
 import { fleet, fleetIntro } from '@/content/site';
 import { revealChars, revealEyebrow, revealLines } from '@/components/motion/reveal';
+import { type Blur, focusPull, setBlur } from '@/components/motion/focusPull';
 import Eyebrow from '@/components/ui/Eyebrow';
 import Magnetic from '@/components/ui/Magnetic';
 import clsx from '@/lib/clsx';
@@ -41,7 +42,8 @@ function slotVars(slot: number) {
     scale: s.s,
     rotate: s.r,
     opacity: s.o,
-    filter: `blur(${((s.blur * unit) / s.s).toFixed(2)}px)`,
+    // CSS blur is applied before the scale, so divide to get the designed on-screen blur.
+    blur: (s.blur * unit) / s.s,
   };
 }
 
@@ -53,12 +55,18 @@ export default function Fleet() {
   const activeRef = useRef(START);
   const busy = useRef(false);
   const dragged = useRef(false);
+  const blurs = useRef<Blur[]>([]);
 
   // Place every card in its slot (no animation) — on mount and on resize.
+  // Any slide in progress is settled first so the two never fight.
   const place = useCallback(() => {
+    busy.current = false;
     cards.current.forEach((card, i) => {
       const slot = rel(i, activeRef.current);
-      gsap.set(card, { ...slotVars(slot), zIndex: SLOTS[slot].z });
+      const { blur, ...move } = slotVars(slot);
+      gsap.killTweensOf(card);
+      gsap.set(card, { ...move, zIndex: SLOTS[slot].z });
+      setBlur(card, (blurs.current[i] ??= { v: 0 }), blur);
     });
   }, []);
 
@@ -79,21 +87,28 @@ export default function Fleet() {
 
     const reduce = prefersReducedMotion();
     const tl = gsap.timeline({
-      defaults: { duration: reduce ? 0.01 : 1.15, ease: 'noir' },
-      onComplete: () => {
-        busy.current = false;
-      },
+      // overwrite:auto lets a quick next click take over a focus pull still in progress.
+      defaults: { duration: reduce ? 0.01 : 1.25, ease: 'power3.inOut', overwrite: 'auto' },
     });
+    // Unlock as soon as the cards have landed; the blur may still be settling.
+    tl.call(() => {
+      busy.current = false;
+    }, [], reduce ? 0.01 : 1.2);
 
     cards.current.forEach((card, i) => {
       const from = rel(i, prev);
       const to = rel(i, next);
+      const b = (blurs.current[i] ??= { v: 0 });
       // A card wrapping around the back jumps between the hidden parking slots first.
       if (Math.abs(to - from) > 1) {
-        gsap.set(card, { ...slotVars(to > 0 ? 3 : -3), zIndex: 0 });
+        const { blur, ...park } = slotVars(to > 0 ? 3 : -3);
+        gsap.set(card, { ...park, zIndex: 0 });
+        setBlur(card, b, blur);
       }
-      tl.to(card, { ...slotVars(to) }, 0);
-      tl.set(card, { zIndex: SLOTS[to].z }, reduce ? 0 : 0.42);
+      const { blur, ...move } = slotVars(to);
+      tl.to(card, move, 0);
+      focusPull(tl, card, b, blur, 0, reduce);
+      tl.set(card, { zIndex: SLOTS[to].z }, reduce ? 0 : 0.5);
     });
   }, []);
 
@@ -201,13 +216,12 @@ export default function Fleet() {
         },
       );
 
-      gsap.to(q('[data-fleet-glow]'), {
-        scale: 1.08,
-        opacity: 0.8,
-        duration: 5,
+      // The glow eases in once and then simply stays.
+      gsap.from(q('[data-fleet-glow]'), {
+        opacity: 0,
+        duration: 2.4,
         ease: 'sine.inOut',
-        yoyo: true,
-        repeat: -1,
+        scrollTrigger: { trigger: root.current, start: 'top 75%', once: true },
       });
 
       gsap.from(q('[data-card-wrap]'), {
@@ -233,7 +247,8 @@ export default function Fleet() {
   return (
     <section ref={root} id="fleet" className={styles.fleet} aria-label="Our collection">
       <div className={styles.frame} data-fleet-frame>
-        <img src="/assets/fleet/glow.svg" alt="" className={styles.glow} data-fleet-glow />
+        {/* Figma Group 7 (three blurred ellipses), pre-rendered: static, no per-frame blur cost. */}
+        <img src="/assets/fleet/glow.webp" alt="" className={styles.glow} data-fleet-glow />
 
         <div
           ref={stage}
@@ -309,6 +324,7 @@ export default function Fleet() {
           <Eyebrow
             text={fleetIntro.eyebrow}
             tone="light"
+            className={styles.eyebrow}
             left={{ src: '/assets/fleet/eyebrow-line-left.svg' }}
             right={{ src: '/assets/fleet/eyebrow-line-right.svg', flip: true }}
           />

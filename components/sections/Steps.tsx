@@ -182,7 +182,13 @@ export default function Steps() {
                         </span>
                       </button>
                       <div id={`step-${i}`} className={styles.body} data-step-body style={i === 0 ? undefined : { height: 0, opacity: 0 }}>
-                        <p>{item.body}</p>
+                        {/* invisible copy of the number keeps the copy aligned under the title */}
+                        <div className={styles.bodyRow}>
+                          <span className={clsx(styles.num, styles.ghost)} aria-hidden>
+                            {item.n}
+                          </span>
+                          <p>{item.body}</p>
+                        </div>
                       </div>
                       <span className={styles.progress} aria-hidden>
                         <span data-step-progress />

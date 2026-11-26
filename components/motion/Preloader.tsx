@@ -6,8 +6,8 @@ import { markIntroDone } from '@/lib/intro';
 import styles from './Preloader.module.css';
 
 /**
- * Opening curtain: the NoirDrive mark is drawn in while a counter runs,
- * then the curtain lifts and hands over to the hero entrance.
+ * White loading screen: the NoirDrive mark draws in while a counter runs,
+ * then everything dissolves in place (no sliding layers) to reveal the hero.
  */
 export default function Preloader() {
   const root = useRef<HTMLDivElement>(null);
@@ -47,21 +47,15 @@ export default function Preloader() {
 
       const intro = gsap.timeline();
       intro
-        .set(el, { autoAlpha: 1 })
         .fromTo(
           `.${styles.mark}`,
           { clipPath: 'inset(0% 100% 0% 0%)' },
-          { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.4, ease: 'noir' },
+          { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.4, ease: 'power3.inOut' },
           0.15,
         )
-        .fromTo(`.${styles.rule}`, { scaleX: 0 }, { scaleX: 0.9, duration: 1.6, ease: 'noir' }, 0.1)
-        .to(counter, { v: 90, duration: 1.6, ease: 'noir', onUpdate: render }, 0.1)
-        .fromTo(
-          `.${styles.meta} > *`,
-          { yPercent: 120 },
-          { yPercent: 0, stagger: 0.08, duration: 1, ease: 'noirOut' },
-          0.2,
-        );
+        .fromTo(`.${styles.rule}`, { scaleX: 0 }, { scaleX: 0.9, duration: 1.6, ease: 'power3.inOut' }, 0.1)
+        .to(counter, { v: 90, duration: 1.6, ease: 'power3.inOut', onUpdate: render }, 0.1)
+        .fromTo(`.${styles.meta}, .${styles.counter}`, { opacity: 0 }, { opacity: 1, duration: 0.9, ease: 'sine.out' }, 0.1);
 
       let outro: gsap.core.Timeline | null = null;
       let cancelled = false;
@@ -77,11 +71,14 @@ export default function Preloader() {
             })
             .to(counter, { v: 100, duration: 0.45, ease: 'power2.out', onUpdate: render })
             .to(`.${styles.rule}`, { scaleX: 1, duration: 0.45, ease: 'power2.out' }, '<')
-            .to(`.${styles.meta} > *`, { yPercent: -120, stagger: 0.05, duration: 0.6, ease: 'noir' }, '+=0.05')
-            .to(`.${styles.mark}`, { yPercent: -30, autoAlpha: 0, duration: 0.7, ease: 'noir' }, '<')
-            .to(`.${styles.rule}`, { scaleX: 0, transformOrigin: '100% 50%', duration: 0.6, ease: 'noir' }, '<')
-            .add(() => markIntroDone(), '-=0.15')
-            .to(el, { clipPath: 'inset(0% 0% 100% 0%)', duration: 1.1, ease: 'noir' }, '-=0.3');
+            .to(`.${styles.center}, .${styles.meta}, .${styles.counter}`, {
+              opacity: 0,
+              scale: 0.985,
+              duration: 0.6,
+              ease: 'sine.inOut',
+            }, '+=0.1')
+            .add(() => markIntroDone(), '-=0.2')
+            .to(el, { opacity: 0, duration: 0.9, ease: 'sine.inOut' }, '-=0.25');
         });
       });
 
@@ -97,7 +94,7 @@ export default function Preloader() {
   return (
     <div ref={root} className={styles.root} aria-hidden>
       <div className={styles.center}>
-        <img className={styles.mark} src="/assets/brand/logo.svg" alt="" width={219} height={23} />
+        <span className={styles.mark} />
         <span className={styles.rule} />
       </div>
       <div className={styles.meta}>

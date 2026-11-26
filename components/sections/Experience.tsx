@@ -85,6 +85,7 @@ export default function Experience() {
           <Eyebrow
             text={experience.eyebrow}
             tone="muted"
+            gap={23.562}
             left={{ src: '/assets/experience/eyebrow-line-left.svg', flip: true }}
             right={{ src: '/assets/experience/eyebrow-line-right.svg' }}
           />

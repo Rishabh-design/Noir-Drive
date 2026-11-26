@@ -28,11 +28,11 @@
   border-radius: 50%;
   border: 1px solid rgba(190, 164, 141, 0.85);
   transition:
-    width 0.45s var(--ease-out),
-    height 0.45s var(--ease-out),
-    margin 0.45s var(--ease-out),
-    background-color 0.35s ease,
-    border-color 0.35s ease;
+    width 0.3s var(--ease-out),
+    height 0.3s var(--ease-out),
+    margin 0.3s var(--ease-out),
+    background-color 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .label {

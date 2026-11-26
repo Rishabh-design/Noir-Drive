@@ -20,10 +20,12 @@
   text-align: center;
 }
 
+/* Figma sets the title 6.5px above its 88.66px box. */
 .title {
+  margin-top: -0.65rem;
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: 8.8655rem;
+  font-size: 6rem;
   line-height: 8.8655rem;
   color: var(--ink-700);
   white-space: nowrap;
@@ -129,6 +131,8 @@
 }
 
 .name {
+  position: relative;
+  top: -0.325rem;
   display: block;
   font-size: 2.3641rem;
   line-height: 3.5462rem;
@@ -204,6 +208,7 @@
   }
 
   .title {
+    margin-top: 0;
     font-size: 3.6rem;
     line-height: 4.2rem;
   }

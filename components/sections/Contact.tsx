@@ -25,25 +25,12 @@ export default function Contact() {
       revealLines(q('[data-ct-body]')[0], q('[data-ct-left]')[0], { start: 'top 75%', delay: 0.3 });
       if (reduce) return;
 
-      // The dark stage opens out to full bleed as it arrives.
-      gsap.fromTo(
-        root.current,
-        { clipPath: 'inset(0% 0.8rem 0% 0.8rem round 2.4rem)' },
-        {
-          clipPath: 'inset(0% 0rem 0% 0rem round 0rem)',
-          ease: 'none',
-          scrollTrigger: { trigger: root.current, start: 'top bottom', end: 'top 30%', scrub: true },
-        },
-      );
-
-      gsap.to(q('[data-ct-glow]'), {
-        xPercent: 4,
-        yPercent: 3,
-        scale: 1.06,
-        duration: 7,
+      // The glow eases in once as the section arrives, then stays put.
+      gsap.from(q('[data-ct-glow]'), {
+        opacity: 0,
+        duration: 2.4,
         ease: 'sine.inOut',
-        yoyo: true,
-        repeat: -1,
+        scrollTrigger: { trigger: root.current, start: 'top 70%', once: true },
       });
 
       const left = gsap.timeline({ scrollTrigger: { trigger: q('[data-ct-left]')[0], start: 'top 75%', once: true } });
@@ -104,7 +91,11 @@ export default function Contact() {
 
   return (
     <section ref={root} id="contact" className={styles.section}>
-      <img src="/assets/contact/glow.svg" alt="" className={styles.glow} data-ct-glow />
+      {/* Figma Group 7 glow + its grain, pre-rendered and static (no per-frame filter work). */}
+      <div className={styles.glow} data-ct-glow aria-hidden>
+        <img src="/assets/contact/glow.webp" alt="" />
+        <span className={styles.glowGrain} />
+      </div>
       <div className={styles.hills} data-ct-hills aria-hidden>
         <Image src="/assets/contact/hills.webp" alt="" fill sizes="100vw" className={styles.hillsImg} />
       </div>

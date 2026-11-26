@@ -50,9 +50,11 @@
   transform: scale(1);
 }
 
+/* Glyphs start 3px into the Figma text box. */
 .logo {
   display: block;
   width: 21.9rem;
+  margin-left: 0.3rem;
 }
 
 .logo img {
@@ -60,11 +62,13 @@
   height: auto;
 }
 
+/* Centred on the page (Figma: hero centre − 0.5px), not on the asymmetric bar:
+   the bar's side margins differ by 9px, hence the +0.4rem. */
 .nav {
   position: absolute;
-  left: 50%;
+  left: calc(50% + 0.4rem);
   top: 50%;
-  translate: calc(-50% - 0.05rem) -50%;
+  translate: -50% -50%;
   display: flex;
   align-items: center;
   gap: 5.9rem;
