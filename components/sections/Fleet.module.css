@@ -1,0 +1,515 @@
+/* Figma "Container" 184:440 — 1711 × 1078 black frame, radius 24, 58px below the interlude. */
+.fleet {
+  position: relative;
+  padding: 0 var(--gutter);
+  margin-top: 5.8rem;
+}
+
+.frame {
+  position: relative;
+  height: 107.8rem;
+  border-radius: var(--radius-frame);
+  background: #000;
+  overflow: hidden;
+  isolation: isolate;
+  will-change: transform;
+}
+
+/* Group 7 — three blurred ellipses (#584c41, #bea48d, white) top-right. */
+.glow {
+  position: absolute;
+  z-index: 0;
+  left: 32.4rem;
+  top: -33.5rem;
+  width: 185.72rem;
+  height: 127.52rem;
+  max-width: none;
+  pointer-events: none;
+  transform-origin: 70% 40%;
+}
+
+/* No z-index here on purpose: cards must interleave with the landscape layer. */
+.stage {
+  position: absolute;
+  inset: 0;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.card {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 73.959rem;
+  height: 41.2rem;
+  margin: -20.6rem 0 0 -36.98rem;
+  cursor: pointer;
+  will-change: transform, filter;
+}
+
+.isActive {
+  cursor: default;
+}
+
+.cardWrap {
+  width: 100%;
+  height: 100%;
+  perspective: 140rem;
+}
+
+.cardTilt {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 3.0766rem;
+  border: 0.0513rem solid #fff;
+  overflow: hidden;
+  background: #111;
+  will-change: transform;
+}
+
+.cardImg {
+  object-fit: cover;
+  pointer-events: none;
+  transition: transform 1.4s var(--ease-out);
+}
+
+.isActive:hover .cardImg {
+  transform: scale(1.04);
+}
+
+/* from 18.75% rgba(66,58,50,0) → rgba(0,0,0,.83) (front card) or black (depth cards) */
+.cardShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(66, 58, 50, 0) 18.75%, rgba(0, 0, 0, 0.83));
+}
+
+.cardShade::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, #000);
+  transition: opacity 0.8s ease;
+}
+
+.isActive .cardShade::after {
+  opacity: 0;
+}
+
+.cardSheen {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at var(--sx, 30%) var(--sy, 20%),
+    rgba(255, 255, 255, 0.22),
+    rgba(255, 255, 255, 0) 45%
+  );
+  mix-blend-mode: soft-light;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+
+.isActive:hover .cardSheen {
+  opacity: 1;
+}
+
+.cardGlow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 1.594rem rgba(255, 255, 255, 0.35);
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  pointer-events: none;
+}
+
+.isActive .cardGlow {
+  opacity: 1;
+}
+
+.cardInfo {
+  position: absolute;
+  left: 3.7046rem;
+  right: 7.2751rem;
+  bottom: 4.2586rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  color: #fff;
+}
+
+.cardLeft {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3017rem;
+}
+
+.chip {
+  display: inline-block;
+  padding: 0.3137rem 1.464rem;
+  border-radius: 2.0135rem;
+  background: var(--sand-400);
+  font-size: 1.2891rem;
+  font-weight: 500;
+  line-height: 1.8822rem;
+  letter-spacing: -0.02578rem;
+  transition: background-color 0.8s ease;
+}
+
+.isActive .chip {
+  background: var(--sand-500);
+}
+
+.cardName {
+  margin-bottom: -0.6034rem;
+  font-size: 2.8962rem;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: -0.05792rem;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
+}
+
+.cardSub,
+.insured {
+  font-size: 1.2891rem;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: -0.02578rem;
+  color: rgba(255, 255, 255, 0.55);
+  white-space: nowrap;
+}
+
+.cardRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 15.743rem;
+}
+
+.price {
+  margin-bottom: -0.0562rem;
+  font-size: 2.6959rem;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: -0.24263rem;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
+}
+
+.insured {
+  font-size: 1.348rem;
+  font-style: italic;
+  letter-spacing: -0.02696rem;
+}
+
+.details {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5287rem;
+  font-size: 1.6931rem;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: -0.03386rem;
+  color: #fff;
+  position: relative;
+}
+
+.details img {
+  width: 1.2474rem;
+  height: 1.2474rem;
+  transition: transform 0.5s var(--ease-out);
+}
+
+.details:hover img {
+  transform: translate(0.3rem, -0.3rem);
+}
+
+.details::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 2.8rem;
+  bottom: 0.1rem;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: 100% 50%;
+  transition: transform 0.6s var(--ease-out);
+}
+
+.details:hover::after {
+  transform: scaleX(1);
+  transform-origin: 0 50%;
+}
+
+/* image 1 — desert landscape across the bottom, over the depth cards. */
+.landscape {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  bottom: -7.2rem;
+  width: 171.6rem;
+  height: 64.3rem;
+  margin-left: calc(-85.8rem + 0.25rem);
+  opacity: 0.82;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.landscape::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(102, 102, 102, 0), rgba(0, 0, 0, 0.2) 94.269%);
+}
+
+/* Figma stretches this fill to the frame (no crop), which keeps the transparent sky. */
+.landscapeImg {
+  object-fit: fill;
+}
+
+/* ---------- copy ---------- */
+.intro {
+  position: absolute;
+  z-index: 6;
+  top: 5.2rem;
+  left: 50%;
+  width: 65.6rem;
+  margin-left: -32.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  text-align: center;
+  pointer-events: none;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 8rem;
+  line-height: 9.8rem;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.body {
+  font-size: 2rem;
+  line-height: 2.8rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ---------- controls ---------- */
+.nav {
+  position: absolute;
+  z-index: 12;
+  top: 50.3rem;
+  width: 7rem;
+  height: 7rem;
+  border-radius: 50%;
+  transition:
+    transform 0.6s var(--ease-out),
+    background-color 0.4s ease;
+}
+
+.nav img {
+  width: 100%;
+  height: 100%;
+}
+
+.nav:hover {
+  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.nav:active {
+  transform: scale(0.94);
+}
+
+.prev {
+  left: 13.3rem;
+}
+
+.next {
+  right: 13.3rem;
+}
+
+.ctaWrap {
+  position: absolute;
+  z-index: 12;
+  left: 0;
+  right: 0;
+  top: 95.1rem;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.ctaWrap > * {
+  pointer-events: auto;
+}
+
+.cta {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 31.5rem;
+  height: 7rem;
+  border: 1px solid #fff;
+  border-radius: 5.4rem;
+  background: rgba(27, 27, 27, 0.61);
+  box-shadow: 0 0.4rem 0.73rem rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(3.4px);
+  -webkit-backdrop-filter: blur(3.4px);
+  font-size: 2.1042rem;
+  font-weight: 500;
+  letter-spacing: -0.04208rem;
+  color: #fff;
+  overflow: hidden;
+  isolation: isolate;
+  transition: color 0.5s ease;
+}
+
+.cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: #fff;
+  clip-path: circle(0% at 50% 100%);
+  transition: clip-path 0.8s var(--ease-out);
+}
+
+.cta:hover {
+  color: var(--ink-600);
+}
+
+.cta:hover::before {
+  clip-path: circle(150% at 50% 100%);
+}
+
+/* ---------- mobile ---------- */
+@media (max-width: 899px) {
+  .fleet {
+    margin-top: 2rem;
+  }
+
+  .frame {
+    height: 72rem;
+  }
+
+  .glow {
+    left: -10rem;
+    top: -20rem;
+    width: 80rem;
+    height: 55rem;
+  }
+
+  .stage {
+    top: 13rem;
+  }
+
+  .card {
+    width: 30rem;
+    height: 16.71rem;
+    margin: -8.36rem 0 0 -15rem;
+  }
+
+  .cardTilt {
+    border-radius: 1.4rem;
+  }
+
+  .cardInfo {
+    left: 1.5rem;
+    right: 1.8rem;
+    bottom: 1.6rem;
+  }
+
+  .chip {
+    padding: 0.15rem 0.7rem;
+    font-size: 0.8rem;
+    line-height: 1.2rem;
+  }
+
+  .cardName {
+    font-size: 1.4rem;
+    margin-bottom: -0.2rem;
+  }
+
+  .cardSub,
+  .insured {
+    font-size: 0.75rem;
+  }
+
+  .cardRight {
+    min-width: 0;
+  }
+
+  .price {
+    font-size: 1.3rem;
+    letter-spacing: -0.08rem;
+  }
+
+  .details {
+    font-size: 0.9rem;
+    gap: 0.6rem;
+  }
+
+  .details img {
+    width: 0.7rem;
+    height: 0.7rem;
+  }
+
+  .landscape {
+    width: 90rem;
+    height: 34rem;
+    margin-left: -45rem;
+    bottom: -3rem;
+  }
+
+  .intro {
+    top: 3.6rem;
+    width: 34rem;
+    margin-left: -17rem;
+  }
+
+  .title {
+    font-size: 4rem;
+    line-height: 4.8rem;
+  }
+
+  .body {
+    font-size: 1.3rem;
+    line-height: 1.9rem;
+  }
+
+  .nav {
+    top: 47rem;
+    width: 4.4rem;
+    height: 4.4rem;
+  }
+
+  .prev {
+    left: 2rem;
+  }
+
+  .next {
+    right: 2rem;
+  }
+
+  .ctaWrap {
+    top: auto;
+    bottom: 4rem;
+  }
+
+  .cta {
+    width: 24rem;
+    height: 5.2rem;
+    font-size: 1.5rem;
+  }
+}

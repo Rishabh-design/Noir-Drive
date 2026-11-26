@@ -1,0 +1,135 @@
+/* Figma "MacBook Pro 16 - 2" (184:430) — 1728 × 1117, 57px below the hero. */
+.road {
+  position: relative;
+  margin-top: 5.7rem;
+}
+
+.stage {
+  position: relative;
+  height: clamp(72rem, 100svh, 130rem);
+  overflow: hidden;
+}
+
+/* "The road is ordinary. / The car you choose shouldn't be." — 95.129 / 84.724, gradient #584c41 → #171717 */
+/* Centres the headline 17.8px above the frame's middle, as in Figma. */
+.titleWrap {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 0 0.1rem 3.56rem 0;
+  pointer-events: none;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 9.5129rem;
+  line-height: 8.4724rem;
+  letter-spacing: -0.19026rem;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.line {
+  display: block;
+}
+
+.word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+/* Each glyph carries its line's slice of the vertical gradient, so the split
+   letters read as one continuous fill. */
+.char {
+  display: inline-block;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  will-change: transform, opacity;
+}
+
+.line[data-line='0'] .char {
+  background-image: linear-gradient(180deg, #584c41 0%, #38322c 100%);
+}
+
+.line[data-line='1'] .char {
+  background-image: linear-gradient(180deg, #38322c 0%, #171717 100%);
+}
+
+/* ---------- tiles ---------- */
+.tile {
+  position: absolute;
+  z-index: 2;
+  left: calc(50% + var(--dx) * 0.1rem);
+  top: calc(50% + var(--dy) * 0.1rem);
+  width: 13.5rem;
+  height: 13.5rem;
+  margin: -6.75rem 0 0 -6.75rem;
+  will-change: transform, opacity;
+}
+
+.tileMouse,
+.tileFloat {
+  width: 100%;
+  height: 100%;
+}
+
+.tileImg {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #d9d9d9;
+  box-shadow: 0 1.8rem 4rem -1.6rem rgba(23, 23, 23, 0.35);
+  transition:
+    transform 0.8s var(--ease-out),
+    box-shadow 0.8s var(--ease-out);
+}
+
+.tileImg img {
+  object-fit: cover;
+  transition: transform 1.2s var(--ease-out);
+}
+
+.tile:hover {
+  z-index: 3;
+}
+
+.tile:hover .tileImg {
+  transform: scale(1.18);
+  box-shadow: 0 3rem 6rem -2rem rgba(23, 23, 23, 0.55);
+}
+
+.tile:hover .tileImg img {
+  transform: scale(1.12);
+}
+
+@media (max-width: 899px) {
+  .road {
+    margin-top: 2rem;
+  }
+
+  .stage {
+    height: 64rem;
+    max-height: none;
+    min-height: 0;
+  }
+
+  .title {
+    font-size: 3.2rem;
+    line-height: 3rem;
+    letter-spacing: -0.06rem;
+    white-space: normal;
+    width: 34rem;
+  }
+
+  .tile {
+    left: calc(50% + var(--dx) * 0.0215rem);
+    top: calc(50% + var(--dy) * 0.07rem);
+    width: 6rem;
+    height: 6rem;
+    margin: -3rem 0 0 -3rem;
+  }
+}

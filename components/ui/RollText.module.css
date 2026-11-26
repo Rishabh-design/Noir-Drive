@@ -1,8 +1,8 @@
 .roll {
   display: inline-block;
+  height: 1.3em;
   overflow: hidden;
   vertical-align: top;
-  line-height: 1.25;
 }
 
 .track {
@@ -13,14 +13,14 @@
 
 .track > span {
   display: block;
+  height: 1.3em;
+  line-height: 1.3em;
   white-space: nowrap;
 }
 
-:global(a):hover > .roll .track,
-:global(button):hover > .roll .track,
-:global(a):focus-visible > .roll .track,
-:global(button):focus-visible > .roll .track,
 :global(a):hover .roll .track,
-:global(button):hover .roll .track {
+:global(button):hover .roll .track,
+:global(a):focus-visible .roll .track,
+:global(button):focus-visible .roll .track {
   transform: translateY(-50%);
 }
