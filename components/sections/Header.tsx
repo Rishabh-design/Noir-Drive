@@ -79,17 +79,17 @@ export default function Header() {
                 <RollText>Book Now</RollText>
               </span>
               <span className={styles.bookDot}>
-                <img src="/assets/hero/book-now-dot.svg" alt="" className={styles.bookDotBg} />
+                <img width={45} height={45} src="/assets/hero/book-now-dot.svg" alt="" className={styles.bookDotBg} />
                 <span className={styles.arrowSwap}>
-                  <img src="/assets/hero/book-now-arrow.svg" alt="" />
-                  <img src="/assets/hero/book-now-arrow.svg" alt="" aria-hidden />
+                  <img width={33} height={33} src="/assets/hero/book-now-arrow.svg" alt="" />
+                  <img width={33} height={33} src="/assets/hero/book-now-arrow.svg" alt="" aria-hidden />
                 </span>
               </span>
             </a>
           </Magnetic>
           <Magnetic strength={0.3}>
             <a href="#contact" className={styles.user} aria-label="Client portal" data-header-item>
-              <img src="/assets/hero/user.svg" alt="" />
+              <img width={32} height={32} src="/assets/hero/user.svg" alt="" />
             </a>
           </Magnetic>
         </div>

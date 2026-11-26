@@ -29,6 +29,10 @@
 .glowGrain {
   position: absolute;
   inset: 0;
+}
+
+/* Texture is fetched only once the section has come into view (see OffscreenPause). */
+[data-seen] .glowGrain {
   background: url('/assets/contact/grain.png') 0 0 / 160px 160px repeat;
   -webkit-mask: url('/assets/contact/glow.webp') 0 0 / 100% 100% no-repeat;
   mask: url('/assets/contact/glow.webp') 0 0 / 100% 100% no-repeat;
@@ -358,7 +362,6 @@ a.item:hover .itemIcon {
   background-image: linear-gradient(180deg, #bea48d 0%, rgba(255, 255, 255, 0) 81.199%);
   -webkit-background-clip: text;
   background-clip: text;
-  will-change: transform;
 }
 
 /* ---------- footer ---------- */

@@ -17,9 +17,7 @@
   justify-content: space-between;
   height: 4.7rem;
   margin: 6.8rem 12.9rem 0 12rem;
-  transition:
-    margin 0.9s var(--ease-in-out),
-    padding 0.9s var(--ease-in-out);
+  transition: transform 0.9s var(--ease-in-out);
 }
 
 /* Glass bar, faded in once the hero is behind us. */
@@ -31,8 +29,6 @@
   border-radius: 10rem;
   background: rgba(23, 23, 23, 0.62);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
   box-shadow: 0 1.6rem 4rem rgba(0, 0, 0, 0.18);
   opacity: 0;
   transform: scale(0.96);
@@ -42,12 +38,15 @@
 }
 
 .solid .bar {
-  margin-top: 2.6rem;
+  transform: translateY(-4.2rem);
 }
 
 .solid .bar::before {
   opacity: 1;
   transform: scale(1);
+  /* Glass blur only while the bar is visible — zero cost over the hero. */
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
 }
 
 /* Glyphs start 3px into the Figma text box. */
@@ -223,7 +222,7 @@
   }
 
   .solid .bar {
-    margin-top: 1.4rem;
+    transform: translateY(-1rem);
   }
 
   .bar::before {

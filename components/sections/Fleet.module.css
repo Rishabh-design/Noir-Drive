@@ -42,11 +42,20 @@
   width: 73.959rem;
   height: 41.2rem;
   margin: -20.6rem 0 0 -36.98rem;
-  cursor: pointer;
+  pointer-events: none; /* only the visible (scaled) pose is clickable */
   will-change: transform, filter;
 }
 
-.isActive {
+/* Scale + tilt layer (see slotVars). */
+.pose {
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+  cursor: pointer;
+  will-change: transform;
+}
+
+.isActive .pose {
   cursor: default;
 }
 
@@ -200,6 +209,7 @@
 }
 
 .insured {
+  font-family: var(--font-poppins-italic), var(--font-body);
   font-size: 1.348rem;
   font-style: italic;
   letter-spacing: -0.02696rem;
@@ -384,11 +394,16 @@
 .cta::before {
   content: '';
   position: absolute;
-  inset: 0;
   z-index: -1;
+  left: 50%;
+  top: 100%;
+  width: 36rem;
+  height: 36rem;
+  margin: -18rem 0 0 -18rem;
+  border-radius: 50%;
   background: #fff;
-  clip-path: circle(0% at 50% 100%);
-  transition: clip-path 0.8s var(--ease-out);
+  transform: scale(0);
+  transition: transform 0.8s var(--ease-out);
 }
 
 .cta:hover {
@@ -396,7 +411,7 @@
 }
 
 .cta:hover::before {
-  clip-path: circle(150% at 50% 100%);
+  transform: scale(1);
 }
 
 /* ---------- mobile ---------- */
@@ -472,7 +487,7 @@
 
   .landscape {
     width: 90rem;
-    height: 34rem;
+    height: 33.7rem; /* keep the image's 2.67:1 ratio */
     margin-left: -45rem;
     bottom: -3rem;
   }

@@ -35,19 +35,18 @@ const START = 1; // Isabella Rodriguez in front, as designed
 const AUTOPLAY = 5;
 const rel = (i: number, active: number) => ((i - active + N + 3) % N) - 3;
 
+/** Shell moves + blurs at on-screen radius; the inner pose scales and tilts (see Fleet). */
 function slotVars(slot: number) {
   const s = SLOTS[slot];
   const unit = parseFloat(getComputedStyle(document.documentElement).fontSize) / 10;
   return {
-    xPercent: (s.x / CARD_W) * 100,
-    yPercent: (s.y / CARD_H) * 100,
-    scale: s.s,
-    rotate: s.r,
-    opacity: s.o,
-    // CSS blur is applied before the scale, so divide to get the designed on-screen blur.
-    blur: (s.blur * unit) / s.s,
+    pos: { xPercent: (s.x / CARD_W) * 100, yPercent: (s.y / CARD_H) * 100, opacity: s.o },
+    pose: { scale: s.s, rotate: s.r },
+    blur: s.blur * unit,
   };
 }
+
+const poseOf = (card: HTMLElement) => card.firstElementChild as HTMLElement;
 
 export default function Testimonials() {
   const root = useRef<HTMLElement>(null);
@@ -68,9 +67,10 @@ export default function Testimonials() {
     busy.current = false;
     cards.current.forEach((card, i) => {
       const slot = rel(i, activeRef.current);
-      const { blur, ...move } = slotVars(slot);
-      gsap.killTweensOf(card);
-      gsap.set(card, { ...move, zIndex: SLOTS[slot].z });
+      const { pos, pose, blur } = slotVars(slot);
+      gsap.killTweensOf([card, poseOf(card)]);
+      gsap.set(card, { ...pos, zIndex: SLOTS[slot].z });
+      gsap.set(poseOf(card), pose);
       setBlur(card, blurOf(i), blur);
     });
   }, []);
@@ -95,12 +95,14 @@ export default function Testimonials() {
       const from = rel(i, prev);
       const to = rel(i, next);
       if (Math.abs(to - from) > 1) {
-        const { blur, ...park } = slotVars(to > 0 ? 3 : -3);
-        gsap.set(card, { ...park, zIndex: 0 });
-        setBlur(card, blurOf(i), blur);
+        const park = slotVars(to > 0 ? 3 : -3);
+        gsap.set(card, { ...park.pos, zIndex: 0 });
+        gsap.set(poseOf(card), park.pose);
+        setBlur(card, blurOf(i), park.blur);
       }
-      const { blur, ...move } = slotVars(to);
-      tl.to(card, move, 0);
+      const { pos, pose, blur } = slotVars(to);
+      tl.to(card, pos, 0);
+      tl.to(poseOf(card), pose, 0);
       focusPull(tl, card, blurOf(i), blur, 0, reduce);
       tl.set(card, { zIndex: SLOTS[to].z }, reduce ? 0 : 0.5);
     });
@@ -170,9 +172,10 @@ export default function Testimonials() {
       // Before the deal: the whole deck waits face-down in the centre slot.
       cards.current.forEach((card, i) => {
         const slot = rel(i, START);
-        const { blur, ...front } = slotVars(0);
-        gsap.set(card, { ...front, yPercent: front.yPercent + 30, opacity: 0, zIndex: SLOTS[slot].z });
-        setBlur(card, blurOf(i), blur);
+        const front = slotVars(0);
+        gsap.set(card, { ...front.pos, yPercent: front.pos.yPercent + 30, opacity: 0, zIndex: SLOTS[slot].z });
+        gsap.set(poseOf(card), front.pose);
+        setBlur(card, blurOf(i), front.blur);
       });
 
       const deal = () => {
@@ -184,9 +187,11 @@ export default function Testimonials() {
         });
         cards.current.forEach((card, i) => {
           const slot = rel(i, START);
-          const { blur, ...move } = slotVars(slot);
+          const { pos, pose, blur } = slotVars(slot);
           const reduce = prefersReducedMotion();
-          tl.to(card, { ...move, duration: reduce ? 0.01 : 1.6, ease: 'power3.out' }, Math.abs(slot) * 0.12);
+          const d = reduce ? 0.01 : 1.6;
+          tl.to(card, { ...pos, duration: d, ease: 'power3.out' }, Math.abs(slot) * 0.12);
+          tl.to(poseOf(card), { ...pose, duration: d, ease: 'power3.out' }, Math.abs(slot) * 0.12);
           focusPull(tl, card, blurOf(i), blur, Math.abs(slot) * 0.12, reduce);
         });
         gsap.from(q('[data-tm-progress]'), { scaleX: 0, opacity: 0, duration: 1.4, ease: 'noir', delay: 0.5 });
@@ -248,7 +253,7 @@ export default function Testimonials() {
           {DECK.map((t, i) => {
             const slot = rel(i, active);
             return (
-              <figure
+              <div
                 key={i}
                 ref={(el) => {
                   if (el) cards.current[i] = el;
@@ -257,10 +262,11 @@ export default function Testimonials() {
                 aria-hidden={slot !== 0}
                 onClick={() => slot !== 0 && Math.abs(slot) <= 2 && step(Math.sign(slot))}
               >
-                <img src="/assets/testimonials/quote.svg" alt="" className={styles.quote} />
-                <div className={styles.stars} aria-label="5 out of 5 stars">
+                <figure className={styles.pose}>
+                <img width={71} height={71} src="/assets/testimonials/quote.svg" alt="" className={styles.quote} />
+                <div className={styles.stars} role="img" aria-label="5 out of 5 stars">
                   {Array.from({ length: 5 }).map((_, s) => (
-                    <img key={s} src="/assets/testimonials/star.svg" alt="" />
+                    <img width={30} height={30} key={s} src="/assets/testimonials/star.svg" alt="" />
                   ))}
                 </div>
                 <blockquote className={styles.text}>{t.quote}</blockquote>
@@ -274,7 +280,8 @@ export default function Testimonials() {
                   </span>
                 </figcaption>
                 <span className={styles.edge} aria-hidden />
-              </figure>
+                </figure>
+              </div>
             );
           })}
         </div>

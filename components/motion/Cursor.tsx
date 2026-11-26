@@ -1,15 +1,21 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { gsap } from '@/lib/gsap';
 import styles from './Cursor.module.css';
 
 /**
- * Two-part cursor: a precise dot and a trailing ring. Elements opt in to
- * states with data attributes:
+ * Two-part cursor: a dot pinned exactly to the pointer and a ring that follows
+ * on a short, frame-rate-independent ease (≈0.13s to settle) — fluid, not laggy.
+ *
+ * Elements opt in to states with data attributes:
  *   data-cursor="hover"            ring swells over links and buttons (automatic for a, button)
  *   data-cursor="drag" | "view"    ring becomes a labelled disc
+ *
+ * Performance: one rAF loop that sleeps once the ring has caught up; transforms only
+ * (no layout, no blend modes, no backdrop blur).
  */
+const FOLLOW = 0.045; // seconds — ring time constant
+
 export default function Cursor() {
   const dot = useRef<HTMLDivElement>(null);
   const ring = useRef<HTMLDivElement>(null);
@@ -17,33 +23,51 @@ export default function Cursor() {
 
   useEffect(() => {
     const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-    if (!fine || !dot.current || !ring.current) return;
+    const d = dot.current;
+    const r = ring.current;
+    if (!fine || !d || !r) return;
     document.documentElement.classList.add('has-cursor');
 
-    // The dot is pinned to the pointer (no lag); the ring trails just enough to feel fluid.
-    const dx = gsap.quickSetter(dot.current, 'x', 'px');
-    const dy = gsap.quickSetter(dot.current, 'y', 'px');
-    const rx = gsap.quickTo(ring.current, 'x', { duration: 0.16, ease: 'power2.out' });
-    const ry = gsap.quickTo(ring.current, 'y', { duration: 0.16, ease: 'power2.out' });
-
+    let tx = 0;
+    let ty = 0;
+    let rx = 0;
+    let ry = 0;
+    let raf = 0;
+    let last = 0;
     let shown = false;
+
+    const tick = (now: number) => {
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      const k = 1 - Math.exp(-dt / FOLLOW);
+      rx += (tx - rx) * k;
+      ry += (ty - ry) * k;
+      r.style.transform = `translate3d(${rx}px, ${ry}px, 0)`;
+      if (Math.abs(tx - rx) + Math.abs(ty - ry) > 0.1) raf = requestAnimationFrame(tick);
+      else raf = 0;
+    };
+
     const move = (e: PointerEvent) => {
+      tx = e.clientX;
+      ty = e.clientY;
+      d.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
       if (!shown) {
         shown = true;
-        gsap.set([dot.current, ring.current], { x: e.clientX, y: e.clientY });
-        gsap.to([dot.current, ring.current], { autoAlpha: 1, duration: 0.4 });
+        rx = tx;
+        ry = ty;
+        r.style.transform = `translate3d(${rx}px, ${ry}px, 0)`;
+        document.documentElement.classList.add('cursor-visible');
       }
-      dx(e.clientX);
-      dy(e.clientY);
-      rx(e.clientX);
-      ry(e.clientY);
+      if (!raf) {
+        last = performance.now();
+        raf = requestAnimationFrame(tick);
+      }
     };
 
     let state = '';
     const setState = (next: string, text = '') => {
       if (next === state) return;
       state = next;
-      const r = ring.current!;
       r.dataset.state = next;
       if (label.current) label.current.textContent = text;
     };
@@ -61,20 +85,21 @@ export default function Cursor() {
       setState('');
     };
 
-    const down = () => gsap.to(ring.current, { scale: 0.82, duration: 0.2, ease: 'power2.out' });
-    const up = () => gsap.to(ring.current, { scale: 1, duration: 0.4, ease: 'back.out(3)' });
-    const leave = () => gsap.to([dot.current, ring.current], { autoAlpha: 0, duration: 0.3 });
-    const enter = () => shown && gsap.to([dot.current, ring.current], { autoAlpha: 1, duration: 0.3 });
+    const down = () => r.classList.add(styles.pressed);
+    const up = () => r.classList.remove(styles.pressed);
+    const leave = () => document.documentElement.classList.remove('cursor-visible');
+    const enter = () => shown && document.documentElement.classList.add('cursor-visible');
 
     window.addEventListener('pointermove', move, { passive: true });
     document.addEventListener('pointerover', over, { passive: true });
-    window.addEventListener('pointerdown', down);
-    window.addEventListener('pointerup', up);
+    window.addEventListener('pointerdown', down, { passive: true });
+    window.addEventListener('pointerup', up, { passive: true });
     document.documentElement.addEventListener('pointerleave', leave);
     document.documentElement.addEventListener('pointerenter', enter);
 
     return () => {
-      document.documentElement.classList.remove('has-cursor');
+      cancelAnimationFrame(raf);
+      document.documentElement.classList.remove('has-cursor', 'cursor-visible');
       window.removeEventListener('pointermove', move);
       document.removeEventListener('pointerover', over);
       window.removeEventListener('pointerdown', down);
@@ -87,6 +112,7 @@ export default function Cursor() {
   return (
     <>
       <div ref={ring} className={styles.ring} aria-hidden>
+        <span className={styles.ringShape} />
         <span ref={label} className={styles.label} />
       </div>
       <div ref={dot} className={styles.dot} aria-hidden />

@@ -103,7 +103,7 @@ export default function Experience() {
               <span className={styles.discWrap}>
                 <span className={styles.ring} data-ring aria-hidden />
                 <span className={styles.disc} data-disc>
-                  <img src={f.icon} alt="" className={styles.icon} data-icon />
+                  <img width={47} height={47} src={f.icon} alt="" className={styles.icon} data-icon />
                 </span>
               </span>
               <h3 className={styles.featureTitle} data-copy>

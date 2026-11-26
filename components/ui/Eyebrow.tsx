@@ -24,7 +24,7 @@ export default function Eyebrow({ text, left, right, tone = 'dark', gap, classNa
     >
       {left && (
         <span className={clsx(styles.line, styles.lineLeft)} data-eyebrow-line>
-          <img src={left.src} alt="" className={clsx(left.flip && styles.flip)} />
+          <img width={115} height={3} src={left.src} alt="" className={clsx(left.flip && styles.flip)} />
         </span>
       )}
       <span className={styles.labelMask}>
@@ -34,7 +34,7 @@ export default function Eyebrow({ text, left, right, tone = 'dark', gap, classNa
       </span>
       {right && (
         <span className={clsx(styles.line, styles.lineRight)} data-eyebrow-line>
-          <img src={right.src} alt="" className={clsx(right.flip && styles.flip)} />
+          <img width={115} height={3} src={right.src} alt="" className={clsx(right.flip && styles.flip)} />
         </span>
       )}
     </div>

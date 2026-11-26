@@ -47,7 +47,6 @@
   color: transparent;
   -webkit-background-clip: text;
   background-clip: text;
-  will-change: transform, opacity;
 }
 
 .line[data-line='0'] .char {

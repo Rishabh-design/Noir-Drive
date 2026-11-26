@@ -33,19 +33,31 @@ const N = fleet.length;
 const START = fleet.findIndex((c) => c.tag === 'Luxury');
 const rel = (i: number, active: number) => ((i - active + N + 3) % N) - 3;
 
+/**
+ * A slot splits across two layers: the card shell moves and carries the blur, the
+ * inner `pose` layer scales and tilts. Because the shell itself is never scaled,
+ * its blur runs at the real on-screen radius (up to 5× cheaper than blurring a
+ * full-size card and shrinking it) while looking exactly the same.
+ */
 function slotVars(slot: number) {
   const s = SLOTS[slot];
   const unit = parseFloat(getComputedStyle(document.documentElement).fontSize) / 10;
   return {
-    xPercent: (s.x / CARD_W) * 100,
-    yPercent: (s.y / CARD_H) * 100,
-    scale: s.s,
-    rotate: s.r,
-    opacity: s.o,
-    // CSS blur is applied before the scale, so divide to get the designed on-screen blur.
-    blur: (s.blur * unit) / s.s,
+    pos: { xPercent: (s.x / CARD_W) * 100, yPercent: (s.y / CARD_H) * 100, opacity: s.o },
+    pose: { scale: s.s, rotate: s.r },
+    blur: s.blur * unit,
   };
 }
+
+const poseOf = (card: HTMLElement) => card.firstElementChild as HTMLElement;
+
+// Image `sizes` per slot distance: centre, neighbours, far. When a card slides to the
+// centre the browser fetches the sharper file while the focus pull is still running.
+const SLOT_SIZES = [
+  '(min-width: 900px) 43vw, 77vw',
+  '(min-width: 900px) 23vw, 41vw',
+  '(min-width: 900px) 15vw, 26vw',
+];
 
 export default function Fleet() {
   const root = useRef<HTMLElement>(null);
@@ -63,9 +75,10 @@ export default function Fleet() {
     busy.current = false;
     cards.current.forEach((card, i) => {
       const slot = rel(i, activeRef.current);
-      const { blur, ...move } = slotVars(slot);
-      gsap.killTweensOf(card);
-      gsap.set(card, { ...move, zIndex: SLOTS[slot].z });
+      const { pos, pose, blur } = slotVars(slot);
+      gsap.killTweensOf([card, poseOf(card)]);
+      gsap.set(card, { ...pos, zIndex: SLOTS[slot].z });
+      gsap.set(poseOf(card), pose);
       setBlur(card, (blurs.current[i] ??= { v: 0 }), blur);
     });
   }, []);
@@ -101,12 +114,14 @@ export default function Fleet() {
       const b = (blurs.current[i] ??= { v: 0 });
       // A card wrapping around the back jumps between the hidden parking slots first.
       if (Math.abs(to - from) > 1) {
-        const { blur, ...park } = slotVars(to > 0 ? 3 : -3);
-        gsap.set(card, { ...park, zIndex: 0 });
-        setBlur(card, b, blur);
+        const park = slotVars(to > 0 ? 3 : -3);
+        gsap.set(card, { ...park.pos, zIndex: 0 });
+        gsap.set(poseOf(card), park.pose);
+        setBlur(card, b, park.blur);
       }
-      const { blur, ...move } = slotVars(to);
-      tl.to(card, move, 0);
+      const { pos, pose, blur } = slotVars(to);
+      tl.to(card, pos, 0);
+      tl.to(poseOf(card), pose, 0);
       focusPull(tl, card, b, blur, 0, reduce);
       tl.set(card, { zIndex: SLOTS[to].z }, reduce ? 0 : 0.5);
     });
@@ -248,7 +263,7 @@ export default function Fleet() {
     <section ref={root} id="fleet" className={styles.fleet} aria-label="Our collection">
       <div className={styles.frame} data-fleet-frame>
         {/* Figma Group 7 (three blurred ellipses), pre-rendered: static, no per-frame blur cost. */}
-        <img src="/assets/fleet/glow.webp" alt="" className={styles.glow} data-fleet-glow />
+        <img width={856} height={539} src="/assets/fleet/glow.webp" alt="" className={styles.glow} loading="lazy" decoding="async" data-fleet-glow />
 
         <div
           ref={stage}
@@ -280,13 +295,14 @@ export default function Fleet() {
                   if (!isActive) goTo(i);
                 }}
               >
+                <div className={styles.pose}>
                 <div className={styles.cardWrap} data-card-wrap>
                   <div className={styles.cardTilt} data-tilt>
                     <Image
                       src={car.image}
                       alt={car.name}
                       fill
-                      sizes="(min-width: 900px) 45vw, 80vw"
+                      sizes={SLOT_SIZES[Math.min(Math.abs(slot), 2)]}
                       className={styles.cardImg}
                       style={{ objectPosition: car.focus }}
                       draggable={false}
@@ -304,12 +320,13 @@ export default function Fleet() {
                         <p className={styles.insured}>Insurance Included</p>
                         <a href="#contact" className={styles.details} tabIndex={isActive ? 0 : -1} data-cursor="hover">
                           View Details
-                          <img src="/assets/fleet/view-arrow-lg.svg" alt="" />
+                          <img width={12} height={12} src="/assets/fleet/view-arrow-lg.svg" alt="" />
                         </a>
                       </div>
                     </div>
                     <span className={styles.cardGlow} />
                   </div>
+                </div>
                 </div>
               </article>
             );
@@ -337,10 +354,10 @@ export default function Fleet() {
         </header>
 
         <button type="button" className={clsx(styles.nav, styles.prev)} onClick={() => go(-1)} aria-label="Previous car" data-fleet-ui>
-          <img src="/assets/fleet/nav-prev.svg" alt="" />
+          <img width={70} height={70} src="/assets/fleet/nav-prev.svg" alt="" />
         </button>
         <button type="button" className={clsx(styles.nav, styles.next)} onClick={() => go(1)} aria-label="Next car" data-fleet-ui>
-          <img src="/assets/fleet/nav-next.svg" alt="" />
+          <img width={70} height={70} src="/assets/fleet/nav-next.svg" alt="" />
         </button>
 
         <div className={styles.ctaWrap} data-fleet-ui>

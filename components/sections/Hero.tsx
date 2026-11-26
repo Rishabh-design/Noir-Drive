@@ -91,7 +91,8 @@ export default function Hero() {
       const reduce = prefersReducedMotion();
 
       // Resting state: a clean, uninterrupted frame; the CTA is not there yet.
-      gsap.set(q('[data-hero-reveal]'), { opacity: 0 });
+      // The photo itself is painted immediately (good LCP); a dark cover dissolves off it.
+      gsap.set(q('[data-hero-cover]'), { opacity: 1 });
       gsap.set(q('[data-hero-zoom]'), { scale: 1.12 });
       gsap.set(lines, { yPercent: 110 });
       gsap.set(q('[data-hero-circle]'), { scale: 0, rotate: -60 });
@@ -101,12 +102,12 @@ export default function Hero() {
 
       let split: SplitText | null = null;
       const off = onIntroDone(() => {
-        split = SplitText.create(body, { type: 'lines', mask: 'lines', linesClass: 'split-line' });
+        split = SplitText.create(body, { type: 'lines', mask: 'lines', linesClass: 'split-line', aria: 'none' });
         const pop = { v: 0 };
         const tl = gsap.timeline();
         tl
           // 1 · the car surfaces inside the full frame — a slow dissolve and settle, no wipes.
-          .to(q('[data-hero-reveal]'), { opacity: 1, duration: 1.6, ease: 'sine.inOut' }, 0)
+          .to(q('[data-hero-cover]'), { opacity: 0, duration: 1.6, ease: 'sine.inOut' }, 0)
           .to(q('[data-hero-zoom]'), { scale: 1, duration: 3, ease: 'power3.out' }, 0)
           // 2 · the copy
           .to(lines, { yPercent: 0, duration: 1.5, stagger: 0.1, ease: 'power4.out' }, 0.55)
@@ -134,7 +135,8 @@ export default function Hero() {
           )
           .to(q('[data-hero-arrow]'), { xPercent: 0, yPercent: 0, opacity: 1, duration: 0.9, ease: 'power3.out' }, 2.25)
           .to(q('[data-hero-pill]'), { scale: 1, opacity: 1, duration: 0.9, ease: 'back.out(1.6)' }, 2.35)
-          .to(q('[data-hero-scroll]'), { opacity: 1, duration: 1, ease: 'sine.inOut' }, 2.6);
+          .to(q('[data-hero-scroll]'), { opacity: 1, duration: 1, ease: 'sine.inOut' }, 2.6)
+          .add(() => split?.revert()); // back to plain text once the copy has landed
         if (reduce) tl.progress(1);
       });
 
@@ -179,7 +181,7 @@ export default function Hero() {
   );
 
   return (
-    <section ref={root} id="top" className={styles.hero}>
+    <section ref={root} id="top" className={styles.hero} data-pause-offscreen>
       <div ref={frame} className={styles.frame}>
         {/* CTA disc — sits beneath the photo and shows through its cut-out. */}
         <a
@@ -190,11 +192,11 @@ export default function Hero() {
           data-hero-circle
           data-cursor="hover"
         >
-          <img src="/assets/hero/cta-circle.svg" alt="" className={styles.circleBg} />
+          <img width={316} height={316} src="/assets/hero/cta-circle.svg" alt="" className={styles.circleBg} />
           <span className={styles.arrowSpin} data-hero-arrow-spin>
             <span className={styles.arrowSwap} data-hero-arrow>
-              <img src="/assets/hero/cta-arrow.svg" alt="" />
-              <img src="/assets/hero/cta-arrow.svg" alt="" aria-hidden />
+              <img width={314} height={314} src="/assets/hero/cta-arrow.svg" alt="" />
+              <img width={314} height={314} src="/assets/hero/cta-arrow.svg" alt="" aria-hidden />
             </span>
           </span>
         </a>
@@ -216,6 +218,7 @@ export default function Hero() {
               </div>
             </div>
             <div className={styles.shade} data-hero-shade />
+            <div className={styles.cover} data-hero-cover aria-hidden />
           </div>
         </div>
 
@@ -242,7 +245,9 @@ export default function Hero() {
 
         <a href="#road" className={styles.scroll} data-hero-scroll aria-label="Scroll to explore">
           <span className={styles.scrollLine}>
-            <img src="/assets/hero/scroll-line.svg" alt="" />
+            <span className={styles.scrollTrack}>
+              <img width={73} height={6} src="/assets/hero/scroll-line.svg" alt="" />
+            </span>
           </span>
           <span className={styles.scrollLabel}>SCROLL</span>
         </a>

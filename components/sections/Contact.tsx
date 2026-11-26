@@ -90,10 +90,10 @@ export default function Contact() {
   };
 
   return (
-    <section ref={root} id="contact" className={styles.section}>
+    <section ref={root} id="contact" className={styles.section} data-pause-offscreen>
       {/* Figma Group 7 glow + its grain, pre-rendered and static (no per-frame filter work). */}
       <div className={styles.glow} data-ct-glow aria-hidden>
-        <img src="/assets/contact/glow.webp" alt="" />
+        <img width={864} height={800} src="/assets/contact/glow.webp" alt="" loading="lazy" decoding="async" />
         <span className={styles.glowGrain} />
       </div>
       <div className={styles.hills} data-ct-hills aria-hidden>
@@ -105,7 +105,7 @@ export default function Contact() {
           <div className={styles.eyebrow} data-ct-eyebrow>
             <span>{contact.eyebrow}</span>
             <span className={styles.rule} data-ct-rule>
-              <img src="/assets/contact/eyebrow-line.svg" alt="" />
+              <img width={115} height={3} src="/assets/contact/eyebrow-line.svg" alt="" />
             </span>
           </div>
           <h2 className={styles.title} data-ct-title>
@@ -119,7 +119,7 @@ export default function Contact() {
             {contact.items.map((item) => {
               const inner = (
                 <>
-                  <img src={item.icon} alt="" className={styles.itemIcon} />
+                  <img width={42} height={42} src={item.icon} alt="" className={styles.itemIcon} />
                   <span className={styles.itemText}>
                     <span className={styles.itemTitle}>{item.title}</span>
                     <span className={styles.itemValue}>{item.value}</span>
@@ -148,7 +148,7 @@ export default function Contact() {
               {contact.socials.map((s) => (
                 <Magnetic key={s.label} strength={0.4}>
                   <a href={s.href} className={styles.social} aria-label={s.label} data-ct-social>
-                    <img src={s.icon} alt="" />
+                    <img width={35} height={35} src={s.icon} alt="" />
                   </a>
                 </Magnetic>
               ))}

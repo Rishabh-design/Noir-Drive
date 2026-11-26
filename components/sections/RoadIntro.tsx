@@ -2,7 +2,7 @@
 
 import { Fragment, useRef } from 'react';
 import Image from 'next/image';
-import { gsap, useGSAP, prefersReducedMotion } from '@/lib/gsap';
+import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion } from '@/lib/gsap';
 import { roadIntro } from '@/content/site';
 import styles from './RoadIntro.module.css';
 
@@ -125,9 +125,9 @@ export default function RoadIntro() {
         },
       );
 
-      // Idle float, independent of scroll.
+      // Idle float, independent of scroll — paused whenever the section is off-screen.
       if (!prefersReducedMotion()) {
-        q('[data-tile-float]').forEach((el, i) => {
+        const floats = q('[data-tile-float]').map((el, i) =>
           gsap.to(el, {
             y: gsap.utils.random(-10, 10),
             rotate: gsap.utils.random(-2.5, 2.5),
@@ -136,7 +136,14 @@ export default function RoadIntro() {
             yoyo: true,
             repeat: -1,
             delay: i * 0.2,
-          });
+            paused: true,
+          }),
+        );
+        ScrollTrigger.create({
+          trigger: root.current,
+          start: 'top bottom',
+          end: 'bottom top',
+          onToggle: (self) => floats.forEach((t) => (self.isActive ? t.resume() : t.pause())),
         });
       }
 
@@ -174,7 +181,7 @@ export default function RoadIntro() {
               <div className={styles.tileMouse} data-tile-mouse>
                 <div className={styles.tileFloat} data-tile-float>
                   <div className={styles.tileImg}>
-                    <Image src={t.src} alt={t.alt} fill sizes="(min-width: 900px) 14vw, 30vw" />
+                    <Image src={t.src} alt={t.alt} fill sizes="(min-width: 900px) 10vw, 16vw" />
                   </div>
                 </div>
               </div>

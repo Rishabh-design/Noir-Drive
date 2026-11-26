@@ -33,20 +33,30 @@
   letter-spacing: -0.01rem;
   white-space: nowrap;
   pointer-events: none;
-  /* a slow sheen that invites the slide */
-  background: linear-gradient(90deg, #fff 0%, #fff 40%, rgba(255, 255, 255, 0.45) 50%, #fff 60%, #fff 100%) 0 0 / 300% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: #fff;
+  overflow: hidden;
+}
+
+/* A soft band sweeps across the label to invite the slide (GPU transform loop). */
+.label::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 35%;
+  background: linear-gradient(90deg, rgba(88, 76, 65, 0), rgba(88, 76, 65, 0.55), rgba(88, 76, 65, 0));
+  transform: translateX(-110%);
   animation: sheen 3.2s linear infinite;
+  will-change: transform;
 }
 
 @keyframes sheen {
   from {
-    background-position: 100% 0;
+    transform: translateX(-110%);
   }
   to {
-    background-position: -50% 0;
+    transform: translateX(400%);
   }
 }
 

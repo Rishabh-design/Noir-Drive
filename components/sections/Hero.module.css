@@ -38,6 +38,7 @@
 
 .photoMouse {
   inset: -2%;
+  will-change: transform;
 }
 
 .photoZoom {
@@ -53,6 +54,15 @@
   position: absolute;
   inset: 0;
   background: #0b0a09;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Entrance cover: same colour as the frame, faded out by the intro timeline. */
+.cover {
+  position: absolute;
+  inset: 0;
+  background: #0e0d0c;
   opacity: 0;
   pointer-events: none;
 }
@@ -220,10 +230,18 @@
   position: relative;
   width: 0.6rem;
   height: 7rem;
-  animation: scrollCue 2.4s var(--ease-in-out) infinite;
+  overflow: hidden;
 }
 
-.scrollLine img {
+/* The cue line travels down through its slot — transform-only, so it runs on the GPU. */
+.scrollTrack {
+  position: absolute;
+  inset: 0;
+  animation: scrollCue 2.4s var(--ease-in-out) infinite;
+  will-change: transform;
+}
+
+.scrollTrack img {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -243,13 +261,13 @@
 
 @keyframes scrollCue {
   0% {
-    clip-path: inset(0 0 100% 0);
+    transform: translateY(-101%);
   }
   45% {
-    clip-path: inset(0 0 0 0);
+    transform: translateY(0);
   }
   100% {
-    clip-path: inset(100% 0 0 0);
+    transform: translateY(101%);
   }
 }
 

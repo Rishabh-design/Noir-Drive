@@ -40,6 +40,7 @@
   -webkit-user-select: none;
 }
 
+/* Shell: position, opacity and blur (never scaled). */
 .card {
   position: absolute;
   left: 50%;
@@ -47,15 +48,26 @@
   width: 44.9187rem;
   height: 57.626rem;
   margin: -28.813rem 0 0 -22.4594rem;
+  pointer-events: none;
+  will-change: transform, filter;
+}
+
+/* Pose: the visible card, scaled and tilted. */
+.pose {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  margin: 0;
   border-radius: 1.4776rem;
   background: var(--ink-600);
   color: #fff;
   cursor: pointer;
-  will-change: transform, filter, opacity;
+  pointer-events: auto;
+  will-change: transform;
   transition: box-shadow 0.9s ease;
 }
 
-.isActive {
+.isActive .pose {
   cursor: grab;
   box-shadow: 0 3.3rem 2.635rem -0.6rem rgba(66, 58, 50, 0.85);
 }
@@ -225,6 +237,9 @@
     width: 28rem;
     height: 35.92rem;
     margin: -17.96rem 0 0 -14rem;
+  }
+
+  .pose {
     border-radius: 1rem;
   }
 

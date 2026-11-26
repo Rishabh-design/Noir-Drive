@@ -176,7 +176,13 @@ html.lenis body {
   inset: 0;
   z-index: 90;
   opacity: 0.035;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background: url('/assets/brand/grain.png') 0 0 / 128px 128px repeat;
+}
+
+/* Looping CSS animations rest while their section is off-screen (see OffscreenPause). */
+[data-offscreen],
+[data-offscreen] * {
+  animation-play-state: paused !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

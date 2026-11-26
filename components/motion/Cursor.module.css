@@ -1,3 +1,5 @@
+/* Both parts are positioned with translate3d from JS; sizes change with
+   transform: scale only, so nothing here ever triggers layout. */
 .dot,
 .ring {
   position: fixed;
@@ -5,9 +7,14 @@
   left: 0;
   z-index: 200;
   pointer-events: none;
-  visibility: hidden;
   opacity: 0;
+  transition: opacity 0.3s ease;
   will-change: transform;
+}
+
+:global(html.cursor-visible) .dot,
+:global(html.cursor-visible) .ring {
+  opacity: 1;
 }
 
 .dot {
@@ -15,64 +22,71 @@
   height: 6px;
   margin: -3px 0 0 -3px;
   border-radius: 50%;
-  background: #fff;
-  mix-blend-mode: difference;
+  background: var(--sand-400);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.55);
 }
 
 .ring {
-  width: 38px;
-  height: 38px;
-  margin: -19px 0 0 -19px;
+  width: 92px;
+  height: 92px;
+  margin: -46px 0 0 -46px;
   display: grid;
   place-items: center;
+}
+
+/* Drawn at the largest size and scaled down, so state changes are GPU-only. */
+.ringShape {
+  position: absolute;
+  inset: 0;
   border-radius: 50%;
-  border: 1px solid rgba(190, 164, 141, 0.85);
+  border: 2.4px solid rgba(190, 164, 141, 0.85);
+  background: rgba(190, 164, 141, 0);
+  transform: scale(0.413);
   transition:
-    width 0.3s var(--ease-out),
-    height 0.3s var(--ease-out),
-    margin 0.3s var(--ease-out),
+    transform 0.32s var(--ease-out),
     background-color 0.25s ease,
     border-color 0.25s ease;
 }
 
 .label {
+  position: relative;
   font: 500 11px/1 var(--font-body);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: #fff;
   opacity: 0;
-  transition: opacity 0.25s ease;
+  transition: opacity 0.2s ease;
 }
 
-.ring[data-state='hover'] {
-  width: 64px;
-  height: 64px;
-  margin: -32px 0 0 -32px;
+.ring[data-state='hover'] .ringShape {
+  transform: scale(0.696);
   background: rgba(190, 164, 141, 0.16);
   border-color: rgba(190, 164, 141, 0.6);
 }
 
-.ring[data-state='text'] {
-  width: 4px;
-  height: 28px;
-  margin: -14px 0 0 -2px;
-  border-radius: 2px;
+.ring[data-state='text'] .ringShape {
+  transform: scale(0.06, 0.3);
   border-color: transparent;
-  background: rgba(190, 164, 141, 0.7);
+  background: rgba(190, 164, 141, 0.8);
 }
 
-.ring[data-state='drag'],
-.ring[data-state='view'] {
-  width: 92px;
-  height: 92px;
-  margin: -46px 0 0 -46px;
-  background: rgba(23, 23, 23, 0.55);
-  border-color: rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+.ring[data-state='drag'] .ringShape,
+.ring[data-state='view'] .ringShape {
+  transform: scale(1);
+  background: rgba(23, 23, 23, 0.72);
+  border-color: rgba(255, 255, 255, 0.45);
+  border-width: 1px;
 }
 
 .ring[data-state='drag'] .label,
 .ring[data-state='view'] .label {
   opacity: 1;
+}
+
+.pressed .ringShape {
+  transform: scale(0.34);
+}
+
+.pressed[data-state='hover'] .ringShape {
+  transform: scale(0.57);
 }

@@ -137,7 +137,7 @@ export default function Steps() {
   );
 
   return (
-    <section ref={root} id="steps" className={styles.steps}>
+    <section ref={root} id="steps" className={styles.steps} data-pause-offscreen>
       <div className={styles.frame}>
         <div className={styles.row}>
           <div className={styles.left}>
@@ -163,7 +163,7 @@ export default function Steps() {
                   <li key={item.n} className={styles.itemWrap}>
                     {i > 0 && (
                       <span className={styles.rule} data-step-rule aria-hidden>
-                        <img src="/assets/steps/divider.svg" alt="" />
+                        <img width={820} height={2} src="/assets/steps/divider.svg" alt="" />
                       </span>
                     )}
                     <div className={clsx(styles.item, isOpen && styles.isOpen)} data-step>
@@ -177,8 +177,8 @@ export default function Steps() {
                         <span className={styles.num}>{item.n}</span>
                         <span className={styles.itemTitle}>{item.title}</span>
                         <span className={styles.icon} aria-hidden>
-                          <img src="/assets/steps/plus.svg" alt="" className={styles.plus} />
-                          <img src="/assets/steps/minus.svg" alt="" className={styles.minus} />
+                          <img width={35} height={35} src="/assets/steps/plus.svg" alt="" className={styles.plus} />
+                          <img width={35} height={35} src="/assets/steps/minus.svg" alt="" className={styles.minus} />
                         </span>
                       </button>
                       <div id={`step-${i}`} className={styles.body} data-step-body style={i === 0 ? undefined : { height: 0, opacity: 0 }}>

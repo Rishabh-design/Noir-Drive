@@ -132,7 +132,7 @@ export default function SlideToBook({ label }: { label: string }) {
         data-cursor="drag"
         data-cursor-label="Slide"
       >
-        <img src="/assets/hero/book-now-arrow.svg" alt="" draggable={false} />
+        <img width={33} height={33} src="/assets/hero/book-now-arrow.svg" alt="" draggable={false} />
       </button>
     </div>
   );
