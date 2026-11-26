@@ -54,7 +54,14 @@ export default function Contact() {
           yPercent: 0,
           ease: 'none',
           stagger: 0.06,
-          scrollTrigger: { trigger: q('[data-ct-wordmark]')[0], start: 'top bottom', end: 'bottom 55%', scrub: 1 },
+          // Finishes as the page bottom is reached, so the letters land fully on every screen.
+          scrollTrigger: {
+            trigger: q('[data-ct-wordmark]')[0],
+            start: 'top bottom',
+            endTrigger: root.current,
+            end: 'bottom bottom',
+            scrub: 1,
+          },
         },
       );
       gsap.fromTo(
@@ -63,7 +70,14 @@ export default function Contact() {
         {
           yPercent: 0,
           ease: 'none',
-          scrollTrigger: { trigger: q('[data-ct-wordmark]')[0], start: 'top bottom', end: 'bottom top', scrub: true },
+          // Settles exactly at the end of the page, leaving the ridge across the letters.
+          scrollTrigger: {
+            trigger: q('[data-ct-wordmark]')[0],
+            start: 'top bottom',
+            endTrigger: root.current,
+            end: 'bottom bottom',
+            scrub: true,
+          },
         },
       );
 
@@ -95,9 +109,6 @@ export default function Contact() {
       <div className={styles.glow} data-ct-glow aria-hidden>
         <img width={864} height={800} src="/assets/contact/glow.webp" alt="" loading="lazy" decoding="async" />
         <span className={styles.glowGrain} />
-      </div>
-      <div className={styles.hills} data-ct-hills aria-hidden>
-        <Image src="/assets/contact/hills.webp" alt="" fill sizes="100vw" className={styles.hillsImg} />
       </div>
 
       <div className={styles.contact}>
@@ -191,6 +202,12 @@ export default function Contact() {
         </form>
       </div>
 
+      {/* Finale: the NoirDrive wordmark rises letter by letter from behind the meadows. */}
+      <div className={styles.finale}>
+      <div className={styles.hills} data-ct-hills aria-hidden>
+        <Image src="/assets/contact/hills.webp" alt="" fill sizes="(min-width: 900px) 100vw, 160vw" className={styles.hillsImg} />
+      </div>
+
       <div className={styles.wordmark} data-ct-wordmark aria-hidden>
         {Array.from(WORDMARK).map((ch, i) => (
           <span key={i} className={styles.wordmarkChar} data-ct-char>
@@ -226,6 +243,7 @@ export default function Contact() {
           <p>{footer.signoff}</p>
         </div>
       </footer>
+      </div>
     </section>
   );
 }

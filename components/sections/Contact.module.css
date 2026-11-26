@@ -38,11 +38,18 @@
   mask: url('/assets/contact/glow.webp') 0 0 / 100% 100% no-repeat;
 }
 
+/* Wordmark, meadows and footer share one block so the meadows can be placed against
+   the wordmark: the ridge (42% down the image) crosses the lower quarter of the letters. */
+.finale {
+  position: relative;
+  display: flow-root; /* stop the wordmark's top margin collapsing through this block */
+}
+
 .hills {
   position: absolute;
   z-index: 1;
   left: 50%;
-  bottom: -40rem;
+  top: -34rem; /* = wordmark top − 52.66rem, as in Figma */
   width: 173.6rem;
   height: 173.6rem;
   margin-left: -86.8rem;
@@ -474,10 +481,10 @@ a.item:hover .itemIcon {
   }
 
   .hills {
-    width: 90rem;
-    height: 90rem;
-    margin-left: -45rem;
-    bottom: -14rem;
+    top: -13.35rem; /* ridge lands 73% down the wordmark, as on desktop */
+    width: 60rem;
+    height: 60rem;
+    margin-left: -30rem;
   }
 
   .contact {
@@ -614,67 +621,71 @@ a.item:hover .itemIcon {
     line-height: 2.6rem;
   }
 
+  /* Wordmark spans the screen and rises behind the meadows, letter by letter. */
   .wordmark {
-    margin-top: 8rem;
-    height: 6.6rem;
-    font-size: 7.6rem;
-    line-height: 6.6rem;
+    margin-top: 7rem;
+    height: 6.65rem;
+    font-size: 7.8rem;
+    line-height: 6.65rem;
   }
 
+  /* Compact footer so it sits on the meadow under the wordmark. */
   .footer {
     height: auto;
-    margin-top: 0;
-    padding: 4rem 2rem 2.4rem;
+    margin-top: -1.6rem;
+    padding: 3rem 2rem 2.4rem;
   }
 
   .cols {
-    grid-template-columns: 1fr 1fr;
-    gap: 3.2rem 2rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2.4rem 1.2rem;
     height: auto;
   }
 
   .brand {
     grid-column: 1 / -1;
-    gap: 1.4rem;
+    gap: 0.8rem;
   }
 
   .footLogo {
-    width: 16rem;
+    width: 12rem;
     margin: 0;
   }
 
   .tagline {
     width: auto;
-    font-size: 1.4rem;
-    line-height: 2.2rem;
-  }
-
-  .col {
-    gap: 1.4rem;
-  }
-
-  .colTitle {
+    max-width: 26rem;
     font-size: 1.2rem;
     line-height: 1.8rem;
   }
 
+  .col {
+    gap: 1rem;
+  }
+
+  .colTitle {
+    font-size: 1rem;
+    line-height: 1.6rem;
+    letter-spacing: 0.12rem;
+  }
+
   .links {
-    gap: 0.8rem;
+    gap: 0;
   }
 
   .link {
-    font-size: 1.5rem;
-    line-height: 2.4rem;
+    font-size: 1.25rem;
+    line-height: 2.1rem;
   }
 
   .base {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.6rem;
+    gap: 0.4rem;
     height: auto;
-    margin-top: 4rem;
-    padding-top: 2rem;
-    font-size: 1.2rem;
-    line-height: 1.8rem;
+    margin-top: 2.4rem;
+    padding-top: 1.4rem;
+    font-size: 1rem;
+    line-height: 1.6rem;
   }
 }

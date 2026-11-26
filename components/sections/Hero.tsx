@@ -75,7 +75,9 @@ export default function Hero() {
     applyNotch.current = () => {
       const unit = parseFloat(getComputedStyle(document.documentElement).fontSize) / 10;
       const r = c.offsetWidth / 2;
-      cl.style.clipPath = heroPath(f.offsetWidth, f.offsetHeight, c.offsetLeft + r, c.offsetTop + r, r, unit, notch.current);
+      // Phones hide the CTA disc, so the frame stays a clean rounded rectangle there.
+      const n = r > 0 ? notch.current : { grow: 0, strip: 0 };
+      cl.style.clipPath = heroPath(f.offsetWidth, f.offsetHeight, c.offsetLeft + r, c.offsetTop + r, r, unit, n);
     };
     applyNotch.current();
     const ro = new ResizeObserver(() => applyNotch.current());

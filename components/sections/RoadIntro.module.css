@@ -111,9 +111,9 @@
   }
 
   .stage {
-    height: 64rem;
+    height: 100svh;
+    min-height: 60rem;
     max-height: none;
-    min-height: 0;
   }
 
   .title {
@@ -126,7 +126,7 @@
 
   .tile {
     left: calc(50% + var(--dx) * 0.0215rem);
-    top: calc(50% + var(--dy) * 0.07rem);
+    top: calc(50% + var(--dy) * 0.088rem);
     width: 6rem;
     height: 6rem;
     margin: -3rem 0 0 -3rem;

@@ -47,25 +47,33 @@ export default function RoadIntro() {
 
       mm.add(
         {
+          // gsap.matchMedia only runs this when at least one query matches, so phones
+          // need their own entry — without it the scene never played on mobile.
           desktop: '(min-width: 900px)',
+          mobile: '(max-width: 899px)',
           reduce: '(prefers-reduced-motion: reduce)',
         },
         (ctx) => {
           const { desktop, reduce } = ctx.conditions as { desktop: boolean; reduce: boolean };
           if (reduce) return;
 
-          if (desktop) {
-            gsap.timeline({
-              scrollTrigger: { trigger: root.current, start: 'top top', end: '+=100%', pin: true, anticipatePin: 1 },
-            });
-          }
+          // Same pinned scene on every screen: the section holds while the tiles fly in.
+          gsap.timeline({
+            scrollTrigger: {
+              trigger: root.current,
+              start: 'top top',
+              end: desktop ? '+=100%' : '+=90%',
+              pin: true,
+              anticipatePin: 1,
+            },
+          });
 
           const tl = gsap.timeline({
             defaults: { ease: 'none' },
             scrollTrigger: {
               trigger: root.current,
               start: 'top 70%',
-              end: desktop ? '+=170%' : 'bottom 30%',
+              end: desktop ? '+=170%' : '+=160%',
               scrub: 1,
             },
           });
@@ -74,6 +82,13 @@ export default function RoadIntro() {
             chars,
             { opacity: 0.08, yPercent: 18 },
             { opacity: 1, yPercent: 0, stagger: 0.03, duration: 0.5, ease: 'power1.out' },
+            0.1,
+          );
+          // Each line comes into focus as its letters arrive (blur on 2 elements, not 50).
+          tl.fromTo(
+            q('[data-line]'),
+            { filter: 'blur(12px)' },
+            { filter: 'blur(0px)', stagger: 0.55, duration: 0.85, ease: 'power2.out' },
             0.1,
           );
 

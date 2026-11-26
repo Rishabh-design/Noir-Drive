@@ -414,6 +414,10 @@
   transform: scale(1);
 }
 
+.dots {
+  display: none;
+}
+
 /* ---------- mobile ---------- */
 @media (max-width: 899px) {
   .fleet {
@@ -421,7 +425,7 @@
   }
 
   .frame {
-    height: 72rem;
+    height: 58rem;
   }
 
   .glow {
@@ -510,23 +514,48 @@
     line-height: 1.9rem;
   }
 
+  /* Swipe replaces the arrows on phones. */
   .nav {
-    top: 47rem;
-    width: 4.4rem;
-    height: 4.4rem;
+    display: none;
   }
 
-  .prev {
-    left: 2rem;
+  .dots {
+    position: absolute;
+    z-index: 12;
+    left: 0;
+    right: 0;
+    top: 46.2rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem;
   }
 
-  .next {
-    right: 2rem;
+  .dot {
+    width: 2.4rem;
+    height: 2.4rem;
+    display: grid;
+    place-items: center;
+  }
+
+  .dot::before {
+    content: '';
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 0.3rem;
+    background: rgba(255, 255, 255, 0.35);
+    transition:
+      width 0.5s var(--ease-out),
+      background-color 0.4s ease;
+  }
+
+  .dotActive::before {
+    width: 1.8rem;
+    background: #fff;
   }
 
   .ctaWrap {
     top: auto;
-    bottom: 4rem;
+    bottom: 3.2rem;
   }
 
   .cta {

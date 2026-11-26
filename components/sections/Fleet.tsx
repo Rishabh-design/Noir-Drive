@@ -127,10 +127,13 @@ export default function Fleet() {
     });
   }, []);
 
+  // Step toward card i one slot at a time (each step is the normal slide).
   const goTo = useCallback(
     (i: number) => {
       const offset = rel(i, activeRef.current);
-      if (offset !== 0) go(Math.sign(offset));
+      if (offset === 0) return;
+      go(Math.sign(offset));
+      if (Math.abs(offset) > 1) gsap.delayedCall(prefersReducedMotion() ? 0.05 : 1.22, () => goTo(i));
     },
     [go],
   );
@@ -154,7 +157,7 @@ export default function Fleet() {
       const dx = e.clientX - startX;
       const dy = e.clientY - startY;
       if (Math.abs(dx) > 8) dragged.current = true;
-      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) go(dx < 0 ? 1 : -1);
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) go(dx < 0 ? 1 : -1);
     };
     el.addEventListener('pointerdown', down);
     window.addEventListener('pointerup', up);
@@ -359,6 +362,19 @@ export default function Fleet() {
         <button type="button" className={clsx(styles.nav, styles.next)} onClick={() => go(1)} aria-label="Next car" data-fleet-ui>
           <img width={70} height={70} src="/assets/fleet/nav-next.svg" alt="" />
         </button>
+
+        {/* Phones: swipe the cards; the dots show where you are. */}
+        <div className={styles.dots} data-fleet-ui>
+          {fleet.map((car, i) => (
+            <button
+              key={car.name}
+              type="button"
+              className={clsx(styles.dot, i === active && styles.dotActive)}
+              onClick={() => goTo(i)}
+              aria-label={`Show ${car.name}`}
+            />
+          ))}
+        </div>
 
         <div className={styles.ctaWrap} data-fleet-ui>
           <Magnetic strength={0.3}>
