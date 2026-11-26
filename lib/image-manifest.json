@@ -6,7 +6,19 @@
   640,
   960
  ],
- "/assets/fleet/lamborghini-aventador.webp": [
+ "/assets/fleet/lamborghini-aventador-coupe-tone.webp": [
+  128,
+  256,
+  384,
+  640
+ ],
+ "/assets/fleet/lamborghini-aventador-coupe.webp": [
+  128,
+  256,
+  384,
+  640
+ ],
+ "/assets/fleet/lamborghini-aventador-roadster-tone.webp": [
   128,
   256,
   384,
@@ -14,11 +26,21 @@
   960,
   1280
  ],
- "/assets/fleet/lamborghini-huracan.webp": [
+ "/assets/fleet/lamborghini-aventador-roadster.webp": [
   128,
   256,
   384,
-  640
+  640,
+  960,
+  1280
+ ],
+ "/assets/fleet/lamborghini-svj-tone.webp": [
+  128,
+  256,
+  384,
+  640,
+  960,
+  1280
  ],
  "/assets/fleet/lamborghini-svj.webp": [
   128,
@@ -37,6 +59,13 @@
   1280,
   1920
  ],
+ "/assets/fleet/mclaren-720s-tone.webp": [
+  128,
+  256,
+  384,
+  640,
+  960
+ ],
  "/assets/fleet/mclaren-720s.webp": [
   128,
   256,
@@ -44,11 +73,25 @@
   640,
   960
  ],
+ "/assets/fleet/mercedes-amg-gt-tone.webp": [
+  128,
+  256,
+  384,
+  640
+ ],
  "/assets/fleet/mercedes-amg-gt.webp": [
   128,
   256,
   384,
   640
+ ],
+ "/assets/fleet/rolls-royce-phantom-tone.webp": [
+  128,
+  256,
+  384,
+  640,
+  960,
+  1280
  ],
  "/assets/fleet/rolls-royce-phantom.webp": [
   128,
@@ -69,7 +112,19 @@
   2560,
   3200
  ],
+ "/assets/road/tile-1-tone.webp": [
+  128,
+  256,
+  384,
+  640
+ ],
  "/assets/road/tile-1.webp": [
+  128,
+  256,
+  384,
+  640
+ ],
+ "/assets/road/tile-2-tone.webp": [
   128,
   256,
   384,
@@ -81,7 +136,19 @@
   384,
   640
  ],
+ "/assets/road/tile-3-tone.webp": [
+  128,
+  256,
+  384,
+  640
+ ],
  "/assets/road/tile-3.webp": [
+  128,
+  256,
+  384,
+  640
+ ],
+ "/assets/road/tile-4-tone.webp": [
   128,
   256,
   384,
@@ -93,7 +160,19 @@
   384,
   640
  ],
+ "/assets/road/tile-5-tone.webp": [
+  128,
+  256,
+  384,
+  640
+ ],
  "/assets/road/tile-5.webp": [
+  128,
+  256,
+  384,
+  640
+ ],
+ "/assets/road/tile-6-tone.webp": [
   128,
   256,
   384,
@@ -105,13 +184,31 @@
   384,
   640
  ],
+ "/assets/road/tile-7-tone.webp": [
+  128,
+  256,
+  384,
+  640
+ ],
  "/assets/road/tile-7.webp": [
   128,
   256,
   384,
   640
  ],
+ "/assets/road/tile-8-tone.webp": [
+  128,
+  256,
+  384,
+  640
+ ],
  "/assets/road/tile-8.webp": [
+  128,
+  256,
+  384,
+  640
+ ],
+ "/assets/steps/steps-car-tone.webp": [
   128,
   256,
   384,

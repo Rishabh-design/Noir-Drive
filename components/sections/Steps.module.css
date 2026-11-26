@@ -9,7 +9,7 @@
   justify-content: center;
   padding: 7.7rem 5.7rem 10.6rem;
   border-radius: var(--radius-frame);
-  background: #fff;
+  background: var(--paper);
 }
 
 .row {
@@ -167,9 +167,9 @@
 .body p {
   margin-top: -0.2rem;
   width: 40.5672rem;
-  font-size: 1.5878rem;
+  font-size: 1.8rem;
   font-weight: 300;
-  line-height: 2.3816rem;
+  line-height: 2.7rem;
   color: var(--ink-500);
 }
 

@@ -17,7 +17,7 @@
   --sand-500: #b09058;
   --sand-400: #bea48d;
   --sand-300: #b39c88;
-  --paper: #ffffff;
+  --paper: #f7f4f0; /* warm off-white, softer than pure white next to the photos */
 
   --font-display: var(--font-clash), 'Clash Display', 'Helvetica Neue', Arial, sans-serif;
   --font-body: var(--font-poppins), 'Poppins', 'Helvetica Neue', Arial, sans-serif;

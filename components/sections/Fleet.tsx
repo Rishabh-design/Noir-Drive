@@ -3,10 +3,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { whenIdle } from '@/lib/idle';
-import { gsap, useGSAP, prefersReducedMotion } from '@/lib/gsap';
+import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion } from '@/lib/gsap';
 import { fleet, fleetIntro } from '@/content/site';
 import { revealChars, revealEyebrow, revealLines } from '@/components/motion/reveal';
 import { type Blur, focusPull, setBlur } from '@/components/motion/focusPull';
+import { bloomCentre, bloomHandlers, bloomOut } from '@/components/motion/colourBloom';
+import bloom from '@/components/motion/Bloom.module.css';
 import Eyebrow from '@/components/ui/Eyebrow';
 import Magnetic from '@/components/ui/Magnetic';
 import clsx from '@/lib/clsx';
@@ -70,6 +72,21 @@ export default function Fleet() {
   const busy = useRef(false);
   const dragged = useRef(false);
   const blurs = useRef<Blur[]>([]);
+  const faces = useRef<HTMLElement[]>([]);
+  // Mouse/trackpad screens bloom on hover; touch screens bloom the centre card.
+  const touch = useRef(false);
+  useEffect(() => {
+    touch.current = !window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  }, []);
+
+  const bloomActive = useCallback((i: number) => {
+    const face = faces.current[i];
+    if (face) bloomCentre(face);
+  }, []);
+  const drain = useCallback((i: number) => {
+    const face = faces.current[i];
+    if (face) bloomOut(face);
+  }, []);
 
   // Place every card in its slot (no animation) — on mount and on resize.
   // Any slide in progress is settled first so the two never fight.
@@ -108,7 +125,9 @@ export default function Fleet() {
     // Unlock as soon as the cards have landed; the blur may still be settling.
     tl.call(() => {
       busy.current = false;
+      if (touch.current) bloomActive(next);
     }, [], reduce ? 0.01 : 1.2);
+    if (touch.current) drain(prev);
 
     cards.current.forEach((card, i) => {
       const from = rel(i, prev);
@@ -127,7 +146,7 @@ export default function Fleet() {
       focusPull(tl, card, b, blur, 0, reduce);
       tl.set(card, { zIndex: SLOTS[to].z }, reduce ? 0 : 0.5);
     });
-  }, []);
+  }, [bloomActive, drain]);
 
   // Step toward card i one slot at a time (each step is the normal slide).
   const goTo = useCallback(
@@ -168,42 +187,6 @@ export default function Fleet() {
       window.removeEventListener('pointerup', up);
     };
   }, [go]);
-
-  // 3D tilt + light sheen on whichever card is in front.
-  useEffect(() => {
-    const el = stage.current;
-    if (!el || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-    const move = (e: PointerEvent) => {
-      const card = cards.current[activeRef.current];
-      const tilt = card?.querySelector<HTMLElement>('[data-tilt]');
-      if (!card || !tilt) return;
-      const r = card.getBoundingClientRect();
-      const nx = (e.clientX - (r.left + r.width / 2)) / r.width;
-      const ny = (e.clientY - (r.top + r.height / 2)) / r.height;
-      const inside = Math.abs(nx) < 0.75 && Math.abs(ny) < 0.85;
-      gsap.to(tilt, {
-        rotateY: inside ? nx * 10 : 0,
-        rotateX: inside ? ny * -8 : 0,
-        duration: 0.9,
-        ease: 'power3.out',
-        overwrite: 'auto',
-      });
-      tilt.style.setProperty('--sx', `${(nx + 0.5) * 100}%`);
-      tilt.style.setProperty('--sy', `${(ny + 0.5) * 100}%`);
-    };
-    const leave = () => {
-      cards.current.forEach((c) => {
-        const t = c.querySelector('[data-tilt]');
-        if (t) gsap.to(t, { rotateX: 0, rotateY: 0, duration: 1.2, ease: 'power3.out' });
-      });
-    };
-    el.addEventListener('pointermove', move);
-    el.addEventListener('pointerleave', leave);
-    return () => {
-      el.removeEventListener('pointermove', move);
-      el.removeEventListener('pointerleave', leave);
-    };
-  }, []);
 
   // Scroll choreography.
   // Below the fold: set up in an idle slice after hydration (see lib/idle.ts).
@@ -256,6 +239,15 @@ export default function Fleet() {
             scrollTrigger: { trigger: root.current, start: 'top 45%', once: true },
           });
 
+          if (touch.current) {
+            ScrollTrigger.create({
+              trigger: root.current,
+              start: 'top 40%',
+              once: true,
+              onEnter: () => gsap.delayedCall(1.5, () => bloomActive(activeRef.current)),
+            });
+          }
+
           gsap.from(q('[data-fleet-ui]'), {
             y: 30,
             opacity: 0,
@@ -306,9 +298,16 @@ export default function Fleet() {
               >
                 <div className={styles.pose}>
                 <div className={styles.cardWrap} data-card-wrap>
-                  <div className={styles.cardTilt} data-tilt>
+                  <div
+                    ref={(el) => {
+                      if (el) faces.current[i] = el;
+                    }}
+                    className={clsx(styles.cardFace, bloom.face)}
+                    {...bloomHandlers({ pose: () => poseOf(cards.current[i]) })}
+                  >
+                    {/* Default: the photo in the site's muted grade. */}
                     <Image
-                      src={car.image}
+                      src={car.tone}
                       alt={car.name}
                       fill
                       sizes={SLOT_SIZES[Math.min(Math.abs(slot), 2)]}
@@ -316,8 +315,20 @@ export default function Fleet() {
                       style={{ objectPosition: car.focus }}
                       draggable={false}
                     />
+                    {/* The original colours, revealed by the bloom (see colourBloom.ts). */}
+                    <span className={bloom.colour} aria-hidden>
+                      <Image
+                        src={car.image}
+                        alt=""
+                        fill
+                        sizes={SLOT_SIZES[Math.min(Math.abs(slot), 2)]}
+                        className={styles.cardImg}
+                        style={{ objectPosition: car.focus }}
+                        draggable={false}
+                      />
+                    </span>
+                    <span className={bloom.light} aria-hidden />
                     <span className={styles.cardShade} />
-                    <span className={styles.cardSheen} />
                     <div className={styles.cardInfo}>
                       <div className={styles.cardLeft}>
                         <span className={styles.chip}>{car.tag}</span>

@@ -197,7 +197,7 @@ export default function Contact() {
           </label>
           <button type="submit" className={styles.submit} data-ct-field data-ct-submit>
             <span className={styles.submitText} data-sent={sent || undefined}>
-              <span>Send Inquiry</span>
+              <span>Request Reservation</span>
               <span aria-hidden={!sent}>Inquiry received — we’ll be in touch</span>
             </span>
           </button>

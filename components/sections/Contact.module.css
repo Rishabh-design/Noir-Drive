@@ -176,9 +176,9 @@ a.item:hover .itemIcon {
 }
 
 .followTitle {
-  font-size: 2.4285rem;
+  font-size: 2rem;
   font-weight: 600;
-  line-height: 3.4693rem;
+  line-height: 3rem;
 }
 
 .socials {
@@ -403,8 +403,8 @@ a.item:hover .itemIcon {
 
 .tagline {
   width: 28.67rem;
-  font-size: 2.1015rem;
-  line-height: 3.4149rem;
+  font-size: 2rem;
+  line-height: 3.2rem;
   color: rgba(255, 255, 255, 0.6);
 }
 
@@ -450,8 +450,8 @@ a.item:hover .itemIcon {
   height: 7.9255rem;
   margin-top: 9.6067rem;
   padding-top: 0.2rem;
-  font-size: 2.1015rem;
-  line-height: 3.0021rem;
+  font-size: 1.8rem;
+  line-height: 2.7rem;
   color: rgba(255, 255, 255, 0.7);
 }
 

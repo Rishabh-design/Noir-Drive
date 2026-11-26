@@ -23,6 +23,7 @@
   width: 100%;
   height: 100%;
   max-width: none;
+  object-fit: cover; /* the frame is a touch wider than the glow image */
   pointer-events: none;
 }
 
@@ -62,10 +63,10 @@
 .cardWrap {
   width: 100%;
   height: 100%;
-  perspective: 140rem;
 }
 
-.cardTilt {
+/* Card face; the colour bloom layers come from components/motion/Bloom.module.css. */
+.cardFace {
   position: relative;
   width: 100%;
   height: 100%;
@@ -73,20 +74,13 @@
   border: 0.0513rem solid #fff;
   overflow: hidden;
   background: #111;
-  will-change: transform;
 }
 
 .cardImg {
   object-fit: cover;
   pointer-events: none;
-  transition: transform 1.4s var(--ease-out);
 }
 
-.isActive:hover .cardImg {
-  transform: scale(1.04);
-}
-
-/* from 18.75% rgba(66,58,50,0) → rgba(0,0,0,.83) (front card) or black (depth cards) */
 .cardShade {
   position: absolute;
   inset: 0;
@@ -103,24 +97,6 @@
 
 .isActive .cardShade::after {
   opacity: 0;
-}
-
-.cardSheen {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    circle at var(--sx, 30%) var(--sy, 20%),
-    rgba(255, 255, 255, 0.22),
-    rgba(255, 255, 255, 0) 45%
-  );
-  mix-blend-mode: soft-light;
-  opacity: 0;
-  transition: opacity 0.6s ease;
-  pointer-events: none;
-}
-
-.isActive:hover .cardSheen {
-  opacity: 1;
 }
 
 .cardGlow {
@@ -160,7 +136,7 @@
   padding: 0.3137rem 1.464rem;
   border-radius: 2.0135rem;
   background: var(--sand-400);
-  font-size: 1.2891rem;
+  font-size: 1.2rem;
   font-weight: 500;
   line-height: 1.8822rem;
   letter-spacing: -0.02578rem;
@@ -173,7 +149,7 @@
 
 .cardName {
   margin-bottom: -0.6034rem;
-  font-size: 2.8962rem;
+  font-size: 2.8rem;
   font-weight: 400;
   line-height: 1.5;
   letter-spacing: -0.05792rem;
@@ -183,7 +159,7 @@
 
 .cardSub,
 .insured {
-  font-size: 1.2891rem;
+  font-size: 1.4rem;
   font-weight: 500;
   line-height: 1.5;
   letter-spacing: -0.02578rem;
@@ -200,7 +176,7 @@
 
 .price {
   margin-bottom: -0.0562rem;
-  font-size: 2.6959rem;
+  font-size: 2.8rem;
   font-weight: 500;
   line-height: 1.5;
   letter-spacing: -0.24263rem;
@@ -210,7 +186,7 @@
 
 .insured {
   font-family: var(--font-poppins-italic), var(--font-body);
-  font-size: 1.348rem;
+  font-size: 1.4rem;
   font-style: italic;
   letter-spacing: -0.02696rem;
 }
@@ -219,7 +195,7 @@
   display: inline-flex;
   align-items: center;
   gap: 1.5287rem;
-  font-size: 1.6931rem;
+  font-size: 1.6rem;
   font-weight: 500;
   line-height: 1.5;
   letter-spacing: -0.03386rem;
@@ -444,7 +420,7 @@
     margin: -8.36rem 0 0 -15rem;
   }
 
-  .cardTilt {
+  .cardFace {
     border-radius: 1.4rem;
   }
 

@@ -1,0 +1,47 @@
+/*
+ * Colour bloom layers (see colourBloom.ts). The face must be a positioned,
+ * overflow-hidden box; the script writes --bx/--by (centre), --br (radius),
+ * --bf (soft edge) and --bring (edge light) on it.
+ */
+.face {
+  --bx: 50%;
+  --by: 50%;
+  --br: 0px;
+  --bf: 1px;
+  --bring: 0;
+}
+
+/* Full-colour original, shown through a soft circle that grows from the pointer. */
+.colour {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(
+    circle at var(--bx) var(--by),
+    #000 calc(var(--br) - var(--bf)),
+    transparent var(--br)
+  );
+  mask-image: radial-gradient(circle at var(--bx) var(--by), #000 calc(var(--br) - var(--bf)), transparent var(--br));
+}
+
+/* Warm light riding the edge of the colour, like a print coming up in the tray. */
+.light {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+  opacity: var(--bring);
+  background: radial-gradient(
+    circle at var(--bx) var(--by),
+    rgba(255, 226, 190, 0) calc(var(--br) - var(--bf)),
+    rgba(255, 226, 190, 0.26) calc(var(--br) - var(--bf) * 0.45),
+    rgba(255, 226, 190, 0) var(--br)
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.face[data-bloom] .colour,
+.face[data-bloom] .light {
+  visibility: visible;
+}

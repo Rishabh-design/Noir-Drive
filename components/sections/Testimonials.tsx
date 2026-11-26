@@ -272,7 +272,7 @@ export default function Testimonials() {
                 <img width={71} height={71} src="/assets/testimonials/quote.svg" alt="" className={styles.quote} />
                 <div className={styles.stars} role="img" aria-label="5 out of 5 stars">
                   {Array.from({ length: 5 }).map((_, s) => (
-                    <img width={30} height={30} key={s} src="/assets/testimonials/star.svg" alt="" />
+                    <img width={30} height={30} key={s} src="/assets/testimonials/star-sand.svg" alt="" />
                   ))}
                 </div>
                 <blockquote className={styles.text}>{t.quote}</blockquote>

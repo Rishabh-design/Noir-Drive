@@ -4,6 +4,9 @@ import { Fragment, useRef } from 'react';
 import Image from 'next/image';
 import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion } from '@/lib/gsap';
 import { roadIntro } from '@/content/site';
+import { bloomHandlers } from '@/components/motion/colourBloom';
+import bloom from '@/components/motion/Bloom.module.css';
+import clsx from '@/lib/clsx';
 import styles from './RoadIntro.module.css';
 
 // Figma frame "MacBook Pro 16 - 2" is 1728 × 1117; tiles are 135 × 135.
@@ -195,8 +198,13 @@ export default function RoadIntro() {
             >
               <div className={styles.tileMouse} data-tile-mouse>
                 <div className={styles.tileFloat} data-tile-float>
-                  <div className={styles.tileImg}>
-                    <Image src={t.src} alt={t.alt} fill sizes="(min-width: 900px) 10vw, 16vw" />
+                  {/* Muted by default; hover (or tap) blooms the original colours in. */}
+                  <div className={clsx(styles.tileImg, bloom.face)} {...bloomHandlers({ tap: true })}>
+                    <Image src={t.tone} alt={t.alt} fill sizes="(min-width: 900px) 10vw, 16vw" />
+                    <span className={bloom.colour} aria-hidden>
+                      <Image src={t.src} alt="" fill sizes="(min-width: 900px) 10vw, 16vw" />
+                    </span>
+                    <span className={bloom.light} aria-hidden />
                   </div>
                 </div>
               </div>

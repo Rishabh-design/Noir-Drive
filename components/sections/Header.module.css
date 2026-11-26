@@ -106,7 +106,7 @@
   gap: 1.7rem;
 }
 
-/* "Book Now" pill — 143 × 47, white hairline, white dot with arrow. */
+/* "Reserve" pill — 143 × 47, white hairline, white dot with arrow. */
 .bookNow {
   position: relative;
   display: flex;
@@ -137,7 +137,7 @@
 }
 
 .bookLabel {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 600;
   letter-spacing: -0.03rem;
   transition: color 0.5s ease;
@@ -196,24 +196,7 @@
   transform: translate(0, 0);
 }
 
-.user {
-  display: grid;
-  place-items: center;
-  width: 4.7rem;
-  height: 4.7rem;
-  border-radius: 2.35rem;
-  background: #fff;
-  transition: background-color 0.4s ease;
-}
 
-.user img {
-  width: 3.2rem;
-  height: 3.2rem;
-}
-
-.user:hover {
-  background: var(--sand-400);
-}
 
 @media (max-width: 899px) {
   .bar {
@@ -257,13 +240,4 @@
     height: 2.8rem;
   }
 
-  .user {
-    width: 4rem;
-    height: 4rem;
-  }
-
-  .user img {
-    width: 2.6rem;
-    height: 2.6rem;
-  }
 }

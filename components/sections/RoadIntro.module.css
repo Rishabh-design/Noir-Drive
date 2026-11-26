@@ -24,7 +24,7 @@
 .title {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 9.5129rem;
+  font-size: 9.6rem;
   line-height: 8.4724rem;
   letter-spacing: -0.19026rem;
   text-align: center;
@@ -82,27 +82,20 @@
   overflow: hidden;
   background: #d9d9d9;
   box-shadow: 0 1.8rem 4rem -1.6rem rgba(23, 23, 23, 0.35);
-  transition:
-    transform 0.8s var(--ease-out),
-    box-shadow 0.8s var(--ease-out);
+  transition: box-shadow 0.8s var(--ease-out);
 }
 
 .tileImg img {
   object-fit: cover;
-  transition: transform 1.2s var(--ease-out);
 }
 
 .tile:hover {
   z-index: 3;
 }
 
+/* Hover: the photo blooms into colour (Bloom.module.css); the tile itself stays put. */
 .tile:hover .tileImg {
-  transform: scale(1.18);
   box-shadow: 0 3rem 6rem -2rem rgba(23, 23, 23, 0.55);
-}
-
-.tile:hover .tileImg img {
-  transform: scale(1.12);
 }
 
 @media (max-width: 899px) {

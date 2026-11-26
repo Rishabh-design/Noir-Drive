@@ -11,22 +11,23 @@ export const nav = [
 
 export const hero = {
   lines: ['Rent the World’s', 'Most Iconic Cars'],
-  body: 'Experience the thrill of driving world-class sports and luxury cars without owning them. Choose from Ferraris, Lamborghinis, Rolls-Royce and more.',
-  cta: 'Book Your Ride',
+  body: 'Experience the thrill of driving world-class sports and luxury cars without owning them. Choose from Lamborghini, McLaren, Rolls-Royce and more.',
+  cta: 'Reserve a Car',
 };
 
 export const roadIntro = {
   lines: ['The road is ordinary.', 'The car you choose shouldn’t be.'],
   // Positions are the tile's top-left corner inside the 1728 × 1117 Figma frame.
+  // src = original colours (revealed by the colour bloom), tone = muted default.
   tiles: [
-    { src: '/assets/road/tile-1.webp', alt: 'Yellow Lamborghini Urus', x: 120, y: 283, depth: 0.9 },
-    { src: '/assets/road/tile-7.webp', alt: 'Gold Lamborghini Sián', x: 568, y: 226, depth: 0.5 },
-    { src: '/assets/road/tile-8.webp', alt: 'White Rolls-Royce Ghost', x: 936, y: 343, depth: 0.7 },
-    { src: '/assets/road/tile-3.webp', alt: 'Silver Mercedes-AMG GT', x: 1404, y: 361, depth: 1 },
-    { src: '/assets/road/tile-6.webp', alt: 'Gold Rolls-Royce Phantom', x: 634, y: 596, depth: 0.6 },
-    { src: '/assets/road/tile-2.webp', alt: 'White Lamborghini Huracán', x: 1217, y: 614, depth: 0.8 },
-    { src: '/assets/road/tile-5.webp', alt: 'Red Audi R8', x: 214, y: 756, depth: 1.1 },
-    { src: '/assets/road/tile-4.webp', alt: 'Red Ferrari 458', x: 1473, y: 749, depth: 0.75 },
+    { src: '/assets/road/tile-1.webp', tone: '/assets/road/tile-1-tone.webp', alt: 'Yellow Lamborghini Urus', x: 120, y: 283, depth: 0.9 },
+    { src: '/assets/road/tile-7.webp', tone: '/assets/road/tile-7-tone.webp', alt: 'Gold Lamborghini Sián', x: 568, y: 226, depth: 0.5 },
+    { src: '/assets/road/tile-8.webp', tone: '/assets/road/tile-8-tone.webp', alt: 'White Rolls-Royce Ghost', x: 936, y: 343, depth: 0.7 },
+    { src: '/assets/road/tile-3.webp', tone: '/assets/road/tile-3-tone.webp', alt: 'Silver Mercedes-AMG GT', x: 1404, y: 361, depth: 1 },
+    { src: '/assets/road/tile-6.webp', tone: '/assets/road/tile-6-tone.webp', alt: 'Gold Rolls-Royce Phantom', x: 634, y: 596, depth: 0.6 },
+    { src: '/assets/road/tile-2.webp', tone: '/assets/road/tile-2-tone.webp', alt: 'White Lamborghini Huracán', x: 1217, y: 614, depth: 0.8 },
+    { src: '/assets/road/tile-5.webp', tone: '/assets/road/tile-5-tone.webp', alt: 'Red Audi R8', x: 214, y: 756, depth: 1.1 },
+    { src: '/assets/road/tile-4.webp', tone: '/assets/road/tile-4-tone.webp', alt: 'Red Ferrari 458', x: 1473, y: 749, depth: 0.75 },
   ],
 };
 
@@ -34,22 +35,30 @@ export type Car = {
   name: string;
   tag: string;
   subtitle: string;
+  /** Indicative daily rate. */
   price: string;
+  /** Original, full-colour photo (revealed on hover). */
   image: string;
+  /** Same photo with the site's warm, low-saturation grade baked in (default state). */
+  tone: string;
   /** object-position for the photo inside the card */
   focus?: string;
 };
 
 // Order = carousel order. The Rolls-Royce opens in the centre slot, as in the design.
-// Only the Rolls-Royce card is fully legible in Figma; the other cards reuse its
-// placeholder copy ("Italian Lightweight Performance", "$420 / day").
+const car = (slug: string, c: Omit<Car, 'image' | 'tone'>): Car => ({
+  ...c,
+  image: `/assets/fleet/${slug}.webp`,
+  tone: `/assets/fleet/${slug}-tone.webp`,
+});
+
 export const fleet: Car[] = [
-  { name: 'Mercedes-AMG GT', tag: 'Sports Coupe', subtitle: 'Italian Lightweight Performance', price: '$420', image: '/assets/fleet/mercedes-amg-gt.webp', focus: '50% 62%' },
-  { name: 'Lamborghini Aventador', tag: 'Sports Coupe', subtitle: 'Italian Lightweight Performance', price: '$420', image: '/assets/fleet/lamborghini-aventador.webp', focus: '50% 60%' },
-  { name: 'Rolls Royce', tag: 'Luxury', subtitle: 'Italian Lightweight Performance', price: '$420', image: '/assets/fleet/rolls-royce-phantom.webp', focus: '50% 50%' },
-  { name: 'Lamborghini Huracán', tag: 'Sports Coupe', subtitle: 'Italian Lightweight Performance', price: '$420', image: '/assets/fleet/lamborghini-huracan.webp', focus: '50% 70%' },
-  { name: 'Lamborghini SVJ', tag: 'Sports Coupe', subtitle: 'Italian Lightweight Performance', price: '$420', image: '/assets/fleet/lamborghini-svj.webp', focus: '50% 55%' },
-  { name: 'McLaren 720S', tag: 'Sports Coupe', subtitle: 'Italian Lightweight Performance', price: '$420', image: '/assets/fleet/mclaren-720s.webp', focus: '50% 62%' },
+  car('mercedes-amg-gt', { name: 'Mercedes-AMG GT', tag: 'Grand Tourer', subtitle: 'German V8 Grand Tourer', price: '$650', focus: '50% 62%' }),
+  car('lamborghini-aventador-roadster', { name: 'Lamborghini Aventador Roadster', tag: 'Open-Top', subtitle: 'Italian V12 Roadster', price: '$2,100', focus: '50% 60%' }),
+  car('rolls-royce-phantom', { name: 'Rolls-Royce Phantom', tag: 'Luxury', subtitle: 'British Handcrafted Luxury', price: '$1,600', focus: '50% 50%' }),
+  car('lamborghini-aventador-coupe', { name: 'Lamborghini Aventador', tag: 'Supercar', subtitle: 'Italian V12 Flagship', price: '$1,900', focus: '50% 70%' }),
+  car('lamborghini-svj', { name: 'Lamborghini SVJ', tag: 'Limited Edition', subtitle: 'Track-Bred V12', price: '$2,700', focus: '50% 55%' }),
+  car('mclaren-720s', { name: 'McLaren 720S', tag: 'Supercar', subtitle: 'British Twin-Turbo V8', price: '$1,400', focus: '50% 62%' }),
 ];
 
 export const fleetIntro = {
@@ -78,14 +87,16 @@ export const experience = {
 };
 
 export const steps = {
-  title: 'Get Your History In Hand With Only Three Simple Steps',
+  title: 'Your Drive, In Three Simple Steps',
   items: [
     { n: '01', title: 'Select Your Car', body: 'Browse our curated collection and choose the perfect vehicle for your journey.' },
     { n: '02', title: 'Book Your Dates', body: 'Pick your dates and delivery point – we confirm availability instantly and handle the paperwork.' },
     { n: '03', title: 'Drive in Style', body: 'Your car arrives detailed, fuelled and insured, wherever you are. All that is left is the road.' },
   ],
-  slider: 'Slide To Book Your Ride',
+  slider: 'Slide To Reserve',
   image: '/assets/steps/steps-car.webp',
+  /** Muted default; the original colours bloom in on hover. */
+  tone: '/assets/steps/steps-car-tone.webp',
 };
 
 export const testimonials = {

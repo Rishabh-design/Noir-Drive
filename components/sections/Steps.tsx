@@ -6,6 +6,8 @@ import { whenIdle } from '@/lib/idle';
 import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion } from '@/lib/gsap';
 import { steps } from '@/content/site';
 import { revealChars } from '@/components/motion/reveal';
+import { bloomCentre, bloomHandlers, bloomOut } from '@/components/motion/colourBloom';
+import bloom from '@/components/motion/Bloom.module.css';
 import SlideToBook from '@/components/ui/SlideToBook';
 import clsx from '@/lib/clsx';
 import styles from './Steps.module.css';
@@ -47,7 +49,8 @@ export default function Steps() {
         overwrite: 'auto',
       });
     });
-    gsap.to(el.querySelector('[data-step-photo]'), {
+    // Two copies of the photo (muted + colour layer) re-frame together.
+    gsap.to(el.querySelectorAll('[data-step-photo]'), {
       ...FRAMES[open],
       duration: reduce ? 0 : 2.2,
       ease: 'noir',
@@ -100,6 +103,17 @@ export default function Steps() {
         contextSafe!(() => {
           const q = gsap.utils.selector(root);
           revealChars(q('[data-steps-title]')[0], root.current!, { start: 'top 70%' });
+
+          // Touch screens have no hover: the photo blooms into colour while it is in view.
+          if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+            const media = q('[data-steps-media]')[0] as HTMLElement;
+            ScrollTrigger.create({
+              trigger: media,
+              start: 'top 55%',
+              end: 'bottom 45%',
+              onToggle: (self) => (self.isActive ? bloomCentre(media) : bloomOut(media)),
+            });
+          }
           if (prefersReducedMotion()) return;
 
           gsap.from(q('[data-step]'), {
@@ -216,11 +230,11 @@ export default function Steps() {
             </div>
           </div>
 
-          <div className={styles.media} data-steps-media>
+          <div className={clsx(styles.media, bloom.face)} data-steps-media {...bloomHandlers()}>
             <div className={styles.parallax} data-steps-parallax>
               <div className={styles.photo} data-step-photo>
                 <Image
-                  src={steps.image}
+                  src={steps.tone}
                   alt="Blue Audi R8 parked above a hillside hedge"
                   fill
                   sizes="(min-width: 900px) 36vw, 100vw"
@@ -228,6 +242,15 @@ export default function Steps() {
                 />
               </div>
             </div>
+            {/* Original colours, revealed by the colour bloom (see colourBloom.ts). */}
+            <div className={bloom.colour} aria-hidden>
+              <div className={styles.parallax} data-steps-parallax>
+                <div className={styles.photo} data-step-photo>
+                  <Image src={steps.image} alt="" fill sizes="(min-width: 900px) 36vw, 100vw" className={styles.img} />
+                </div>
+              </div>
+            </div>
+            <span className={bloom.light} aria-hidden />
           </div>
         </div>
       </div>
