@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { gsap, SplitText, useGSAP, prefersReducedMotion } from '@/lib/gsap';
 import { markHeroCta, onIntroDone } from '@/lib/intro';
 import { hero } from '@/content/site';
+import { remUnit } from '@/lib/units';
 import styles from './Hero.module.css';
 
 type Notch = { grow: number; strip: number };
@@ -72,15 +73,28 @@ export default function Hero() {
     const c = circle.current;
     const cl = clip.current;
     if (!f || !c || !cl) return;
-    applyNotch.current = () => {
-      const unit = parseFloat(getComputedStyle(document.documentElement).fontSize) / 10;
-      const r = c.offsetWidth / 2;
-      // Phones hide the CTA disc, so the frame stays a clean rounded rectangle there.
-      const n = r > 0 ? notch.current : { grow: 0, strip: 0 };
-      cl.style.clipPath = heroPath(f.offsetWidth, f.offsetHeight, c.offsetLeft + r, c.offsetTop + r, r, unit, n);
+    // Geometry is measured only on mount/resize; the per-frame updates during the
+    // disc's pop-in reuse it, so they never force a layout.
+    const g = { w: 0, h: 0, cx: 0, cy: 0, r: 0, unit: 1 };
+    const measure = () => {
+      g.unit = remUnit();
+      g.r = c.offsetWidth / 2;
+      g.w = f.offsetWidth;
+      g.h = f.offsetHeight;
+      g.cx = c.offsetLeft + g.r;
+      g.cy = c.offsetTop + g.r;
     };
+    applyNotch.current = () => {
+      // Phones hide the CTA disc, so the frame stays a clean rounded rectangle there.
+      const n = g.r > 0 ? notch.current : { grow: 0, strip: 0 };
+      cl.style.clipPath = heroPath(g.w, g.h, g.cx, g.cy, g.r, g.unit, n);
+    };
+    measure();
     applyNotch.current();
-    const ro = new ResizeObserver(() => applyNotch.current());
+    const ro = new ResizeObserver(() => {
+      measure();
+      applyNotch.current();
+    });
     ro.observe(f);
     return () => ro.disconnect();
   }, []);

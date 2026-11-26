@@ -26,9 +26,16 @@ export default function Steps() {
   const hovering = useRef(false);
 
   // Expand / collapse bodies and move the camera whenever the open step changes.
+  // Skipped on mount: the first step is already open in the markup, and tweening to
+  // height:auto there would force a layout measurement during start-up.
+  const mounted = useRef(false);
   useEffect(() => {
     const el = root.current;
     if (!el) return;
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
+    }
     const reduce = prefersReducedMotion();
     el.querySelectorAll<HTMLElement>('[data-step-body]').forEach((body, i) => {
       gsap.to(body, {

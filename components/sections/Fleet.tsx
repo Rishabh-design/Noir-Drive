@@ -9,6 +9,7 @@ import { type Blur, focusPull, setBlur } from '@/components/motion/focusPull';
 import Eyebrow from '@/components/ui/Eyebrow';
 import Magnetic from '@/components/ui/Magnetic';
 import clsx from '@/lib/clsx';
+import { remUnit } from '@/lib/units';
 import styles from './Fleet.module.css';
 
 /*
@@ -41,7 +42,7 @@ const rel = (i: number, active: number) => ((i - active + N + 3) % N) - 3;
  */
 function slotVars(slot: number) {
   const s = SLOTS[slot];
-  const unit = parseFloat(getComputedStyle(document.documentElement).fontSize) / 10;
+  const unit = remUnit();
   return {
     pos: { xPercent: (s.x / CARD_W) * 100, yPercent: (s.y / CARD_H) * 100, opacity: s.o },
     pose: { scale: s.s, rotate: s.r },

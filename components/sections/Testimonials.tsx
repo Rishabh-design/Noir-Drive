@@ -8,6 +8,7 @@ import { revealChars, revealEyebrow } from '@/components/motion/reveal';
 import { type Blur, focusPull, setBlur } from '@/components/motion/focusPull';
 import Eyebrow from '@/components/ui/Eyebrow';
 import clsx from '@/lib/clsx';
+import { remUnit } from '@/lib/units';
 import styles from './Testimonials.module.css';
 
 /*
@@ -38,7 +39,7 @@ const rel = (i: number, active: number) => ((i - active + N + 3) % N) - 3;
 /** Shell moves + blurs at on-screen radius; the inner pose scales and tilts (see Fleet). */
 function slotVars(slot: number) {
   const s = SLOTS[slot];
-  const unit = parseFloat(getComputedStyle(document.documentElement).fontSize) / 10;
+  const unit = remUnit();
   return {
     pos: { xPercent: (s.x / CARD_W) * 100, yPercent: (s.y / CARD_H) * 100, opacity: s.o },
     pose: { scale: s.s, rotate: s.r },
