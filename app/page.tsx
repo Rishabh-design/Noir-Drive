@@ -2,6 +2,10 @@ import Header from '@/components/sections/Header';
 import Hero from '@/components/sections/Hero';
 import RoadIntro from '@/components/sections/RoadIntro';
 import Fleet from '@/components/sections/Fleet';
+import Experience from '@/components/sections/Experience';
+import Steps from '@/components/sections/Steps';
+import Testimonials from '@/components/sections/Testimonials';
+import Contact from '@/components/sections/Contact';
 
 export default function Home() {
   return (
@@ -11,7 +15,10 @@ export default function Home() {
         <Hero />
         <RoadIntro />
         <Fleet />
-        <div style={{ height: '100vh' }} />
+        <Experience />
+        <Steps />
+        <Testimonials />
+        <Contact />
       </main>
     </>
   );

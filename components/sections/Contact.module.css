@@ -1,0 +1,651 @@
+/* Figma "Frame 37" 184:265 — 1728 × 1939, #171717, 163px below the testimonials. */
+.section {
+  position: relative;
+  margin-top: 16.3rem;
+  background: var(--ink-950);
+  color: #fff;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Group 7, mirrored (rotate 180 + flip Y), with its noise filter. */
+.glow {
+  position: absolute;
+  z-index: 0;
+  left: -71.05rem;
+  top: -61.35rem;
+  width: 229.1rem;
+  height: 184.8rem;
+  max-width: none;
+  transform: scaleX(-1);
+  pointer-events: none;
+}
+
+.hills {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  bottom: -40rem;
+  width: 173.6rem;
+  height: 173.6rem;
+  margin-left: -86.8rem;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.hillsImg {
+  object-fit: cover;
+  object-position: 50% 100%;
+}
+
+/* ---------- contact row ---------- */
+.contact {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 6.3rem;
+  padding: 10.9rem 0 0 11.8rem;
+}
+
+.left {
+  width: 75.4rem;
+  flex: none;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 1.7rem;
+  overflow: hidden;
+  font-size: 2.0686rem;
+  font-weight: 500;
+  line-height: 2.9552rem;
+}
+
+.rule {
+  display: block;
+  width: 11.4rem;
+  transform-origin: 0 50%;
+}
+
+.rule img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transform: scaleX(-1);
+}
+
+.title {
+  margin-top: 1.1rem;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 8rem;
+  line-height: 9.8rem;
+  white-space: nowrap;
+}
+
+.body {
+  margin-top: 1rem;
+  width: 69rem;
+  font-size: 2.4rem;
+  line-height: 2.8rem;
+  color: rgba(255, 255, 255, 0.59);
+}
+
+.items {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  margin-top: 3.1rem;
+}
+
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: 2.776rem;
+  min-height: 9.02rem;
+}
+
+.itemIcon {
+  flex: none;
+  width: 4.1631rem;
+  height: 4.1631rem;
+  margin-top: 0.694rem;
+  transition: transform 0.7s var(--ease-out);
+}
+
+.itemText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.itemTitle,
+.itemValue {
+  display: block;
+  font-weight: 500;
+  line-height: 4.1631rem;
+  white-space: nowrap;
+}
+
+.itemTitle {
+  font-size: 2.7754rem;
+}
+
+.itemValue {
+  font-size: 2.4rem;
+  color: rgba(255, 255, 255, 0.65);
+  transition: color 0.4s ease;
+}
+
+a.item:hover .itemValue {
+  color: var(--sand-400);
+}
+
+a.item:hover .itemIcon {
+  transform: rotate(-10deg) scale(1.08);
+}
+
+.follow {
+  margin-top: 3.1rem;
+}
+
+.followTitle {
+  font-size: 2.4285rem;
+  font-weight: 600;
+  line-height: 3.4693rem;
+}
+
+.socials {
+  display: flex;
+  gap: 2.7754rem;
+  margin-top: 2.7754rem;
+}
+
+.social {
+  display: grid;
+  place-items: center;
+  width: 6.9385rem;
+  height: 6.9385rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 0.1388rem solid rgba(255, 255, 255, 0.1);
+  transition:
+    background-color 0.5s ease,
+    border-color 0.5s ease;
+}
+
+.social img {
+  width: 3.4693rem;
+  height: 3.4693rem;
+  transition: transform 0.6s var(--ease-out);
+}
+
+.social:hover {
+  background: rgba(190, 164, 141, 0.25);
+  border-color: rgba(190, 164, 141, 0.6);
+}
+
+.social:hover img {
+  transform: scale(1.12);
+}
+
+/* ---------- inquiry form ---------- */
+.form {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 3.5368rem;
+  width: 67.1992rem;
+  height: 85.4358rem;
+  padding: 4.8337rem 4.8336rem 0.1179rem;
+  border: 0.085rem solid #fff;
+  border-radius: 1.4737rem;
+  background: rgba(66, 58, 50, 0.3);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transform-origin: 50% 100%;
+}
+
+.nameRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3.5368rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1789rem;
+}
+
+.label {
+  font-size: 2.05rem;
+  font-weight: 500;
+  line-height: 2.9473rem;
+  letter-spacing: 0.10316rem;
+  color: rgba(255, 255, 255, 0.6);
+  transition: color 0.4s ease;
+}
+
+.field:focus-within .label {
+  color: #fff;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  height: 5.3052rem;
+  padding: 0.5895rem 1.7684rem;
+  border: 0.1179rem solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.1789rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-size: 2rem;
+  line-height: 2.9473rem;
+  outline: none;
+  transition:
+    border-color 0.4s ease,
+    background-color 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+.field textarea {
+  height: 18.8629rem;
+  padding: 1.1789rem 1.7684rem;
+  resize: none;
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.field input:hover,
+.field textarea:hover {
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.field input:focus,
+.field textarea:focus {
+  border-color: rgba(190, 164, 141, 0.85);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 0.4rem rgba(190, 164, 141, 0.14);
+}
+
+.submit {
+  position: relative;
+  height: 7.0736rem;
+  border-radius: 1.1789rem;
+  background: #fff;
+  color: var(--ink-800);
+  font-size: 2.4rem;
+  font-weight: 500;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Matte grain, as on the Figma button. */
+.submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.22;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+.submit::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--sand-400);
+  transform: translateY(101%);
+  transition: transform 0.7s var(--ease-out);
+}
+
+.submit:hover::after {
+  transform: translateY(0);
+}
+
+.submitText {
+  display: block;
+  height: 4.1263rem;
+  overflow: hidden;
+  line-height: 4.1263rem;
+}
+
+.submitText > span {
+  display: block;
+  transition: transform 0.8s var(--ease-in-out);
+}
+
+.submitText[data-sent] > span {
+  transform: translateY(-100%);
+}
+
+/* ---------- wordmark ---------- */
+.wordmark {
+  position: relative;
+  z-index: 0;
+  margin-top: 16.6rem;
+  height: 27.87rem;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 32.6848rem;
+  line-height: 27.8735rem;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.wordmarkChar {
+  display: inline-block;
+  color: transparent;
+  background-image: linear-gradient(180deg, #bea48d 0%, rgba(255, 255, 255, 0) 81.199%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  will-change: transform;
+}
+
+/* ---------- footer ---------- */
+.footer {
+  position: relative;
+  z-index: 2;
+  height: 55.1rem;
+  margin-top: -2.7rem;
+  padding: 9.6067rem 12.8rem 0 11.1rem;
+}
+
+.cols {
+  display: grid;
+  grid-template-columns: repeat(4, 31.2217rem);
+  column-gap: 12.1rem;
+  height: 26.4184rem;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: 2.4017rem;
+}
+
+.footLogo {
+  width: 27.375rem;
+  height: auto;
+  margin: 0.95rem 0;
+}
+
+.tagline {
+  width: 28.67rem;
+  font-size: 2.1015rem;
+  line-height: 3.4149rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 3.6025rem;
+}
+
+.colTitle {
+  font-size: 2.1015rem;
+  font-weight: 700;
+  line-height: 3.0021rem;
+  letter-spacing: 0.21015rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8013rem;
+}
+
+.link {
+  display: inline-block;
+  font-size: 2.4017rem;
+  line-height: 3.6025rem;
+  color: rgba(255, 255, 255, 0.8);
+  transition: color 0.4s ease;
+}
+
+.link:hover {
+  color: var(--sand-400);
+}
+
+.base {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 7.9255rem;
+  margin-top: 9.6067rem;
+  padding-top: 0.2rem;
+  font-size: 2.1015rem;
+  line-height: 3.0021rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.baseRule {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.19);
+  transform-origin: 0 50%;
+}
+
+/* ---------- mobile ---------- */
+@media (max-width: 899px) {
+  .section {
+    margin-top: 8rem;
+  }
+
+  .glow {
+    left: -60rem;
+    top: -40rem;
+    width: 140rem;
+    height: 113rem;
+  }
+
+  .hills {
+    width: 90rem;
+    height: 90rem;
+    margin-left: -45rem;
+    bottom: -14rem;
+  }
+
+  .contact {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4rem;
+    padding: 6.4rem 2rem 0;
+  }
+
+  .left {
+    width: auto;
+  }
+
+  .eyebrow {
+    font-size: 1.2rem;
+    line-height: 1.8rem;
+  }
+
+  .rule {
+    width: 6rem;
+  }
+
+  .title {
+    font-size: 3.4rem;
+    line-height: 4.2rem;
+    white-space: normal;
+  }
+
+  .body {
+    width: auto;
+    font-size: 1.5rem;
+    line-height: 2.2rem;
+  }
+
+  .items {
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+
+  .item {
+    gap: 1.6rem;
+    min-height: 0;
+  }
+
+  .itemIcon {
+    width: 2.6rem;
+    height: 2.6rem;
+    margin-top: 0.2rem;
+  }
+
+  .itemTitle,
+  .itemValue {
+    line-height: 2.4rem;
+  }
+
+  .itemTitle {
+    font-size: 1.6rem;
+  }
+
+  .itemValue {
+    font-size: 1.4rem;
+  }
+
+  .followTitle {
+    font-size: 1.4rem;
+    line-height: 2rem;
+  }
+
+  .socials {
+    gap: 1.4rem;
+    margin-top: 1.4rem;
+  }
+
+  .social {
+    width: 4.8rem;
+    height: 4.8rem;
+  }
+
+  .social img {
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+
+  .form {
+    width: auto;
+    height: auto;
+    gap: 2rem;
+    padding: 2.4rem 2rem;
+  }
+
+  .nameRow {
+    gap: 1.2rem;
+  }
+
+  .field {
+    gap: 0.8rem;
+  }
+
+  .label {
+    font-size: 1.3rem;
+    line-height: 1.8rem;
+    letter-spacing: 0.06rem;
+  }
+
+  .field input,
+  .field textarea {
+    height: 4.4rem;
+    font-size: 1.5rem;
+    border-radius: 0.9rem;
+    padding: 0.4rem 1.2rem;
+  }
+
+  .field textarea {
+    height: 12rem;
+    padding: 1rem 1.2rem;
+  }
+
+  .submit {
+    height: 5.2rem;
+    font-size: 1.6rem;
+  }
+
+  .submitText {
+    height: 2.6rem;
+    line-height: 2.6rem;
+  }
+
+  .wordmark {
+    margin-top: 8rem;
+    height: 6.6rem;
+    font-size: 7.6rem;
+    line-height: 6.6rem;
+  }
+
+  .footer {
+    height: auto;
+    margin-top: 0;
+    padding: 4rem 2rem 2.4rem;
+  }
+
+  .cols {
+    grid-template-columns: 1fr 1fr;
+    gap: 3.2rem 2rem;
+    height: auto;
+  }
+
+  .brand {
+    grid-column: 1 / -1;
+    gap: 1.4rem;
+  }
+
+  .footLogo {
+    width: 16rem;
+    margin: 0;
+  }
+
+  .tagline {
+    width: auto;
+    font-size: 1.4rem;
+    line-height: 2.2rem;
+  }
+
+  .col {
+    gap: 1.4rem;
+  }
+
+  .colTitle {
+    font-size: 1.2rem;
+    line-height: 1.8rem;
+  }
+
+  .links {
+    gap: 0.8rem;
+  }
+
+  .link {
+    font-size: 1.5rem;
+    line-height: 2.4rem;
+  }
+
+  .base {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+    height: auto;
+    margin-top: 4rem;
+    padding-top: 2rem;
+    font-size: 1.2rem;
+    line-height: 1.8rem;
+  }
+}

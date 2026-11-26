@@ -11,7 +11,7 @@
 </g>
 </g>
 <defs>
-<filter id="filter0_n_0_51" x="486.5" y="486.5" width="1318" height="874.999" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<filter id="filter0_n_0_51" x="0" y="0" width="2291" height="1848" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
 <feFlood flood-opacity="0" result="BackgroundImageFix"/>
 <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
 <feTurbulence type="fractalNoise" baseFrequency="2.0000002384185791 2.0000002384185791" stitchTiles="stitch" numOctaves="3" result="noise" seed="6191" />

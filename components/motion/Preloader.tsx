@@ -42,7 +42,7 @@ export default function Preloader() {
             else window.addEventListener('load', () => res(), { once: true });
           }),
         ]),
-        new Promise((res) => setTimeout(res, 3800)),
+        new Promise((res) => setTimeout(res, 2600)),
       ]);
 
       const intro = gsap.timeline();
