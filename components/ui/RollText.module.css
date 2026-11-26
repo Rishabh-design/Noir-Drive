@@ -1,0 +1,26 @@
+.roll {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  line-height: 1.25;
+}
+
+.track {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.6s var(--ease-out);
+}
+
+.track > span {
+  display: block;
+  white-space: nowrap;
+}
+
+:global(a):hover > .roll .track,
+:global(button):hover > .roll .track,
+:global(a):focus-visible > .roll .track,
+:global(button):focus-visible > .roll .track,
+:global(a):hover .roll .track,
+:global(button):hover .roll .track {
+  transform: translateY(-50%);
+}

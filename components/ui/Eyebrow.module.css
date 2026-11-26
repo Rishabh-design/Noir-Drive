@@ -1,0 +1,79 @@
+.eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.line {
+  display: block;
+  width: 11.4rem;
+  flex: none;
+}
+
+.line img {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* Rules draw outward from the label (the wrapper scales, the img keeps its mirror). */
+.lineLeft {
+  transform-origin: 100% 50%;
+}
+
+.lineRight {
+  transform-origin: 0% 50%;
+}
+
+/* Figma's rotate(180deg) + scaleY(-1) is a horizontal mirror. */
+.flip {
+  transform: scaleX(-1);
+}
+
+.labelMask {
+  display: block;
+  overflow: hidden;
+  padding: 0.2rem 0;
+}
+
+.label {
+  display: block;
+  font-size: 2rem;
+  font-weight: 500;
+  line-height: 2.95rem;
+  white-space: nowrap;
+}
+
+.light .label {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.dark .label {
+  color: var(--ink-700);
+}
+
+.white .label {
+  color: #fff;
+}
+
+.muted .label {
+  color: rgba(28, 25, 22, 0.39);
+  letter-spacing: 0.206rem;
+}
+
+@media (max-width: 899px) {
+  .eyebrow {
+    gap: 1.2rem;
+  }
+
+  .line {
+    width: 5.6rem;
+  }
+
+  .label {
+    font-size: 1.2rem;
+    line-height: 1.8rem;
+  }
+}
