@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
+import { whenIdle } from '@/lib/idle';
 import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion } from '@/lib/gsap';
 import { testimonials } from '@/content/site';
 import { revealChars, revealEyebrow } from '@/components/motion/reveal';
@@ -164,54 +165,58 @@ export default function Testimonials() {
     };
   }, [step]);
 
+  // Below the fold: set up in an idle slice after hydration (see lib/idle.ts).
   useGSAP(
-    () => {
-      const q = gsap.utils.selector(root);
-      revealEyebrow(q('[data-eyebrow]')[0]);
-      revealChars(q('[data-tm-title]')[0], q('[data-tm-head]')[0], { delay: 0.1 });
+    (_ctx, contextSafe) =>
+      whenIdle(
+        contextSafe!(() => {
+          const q = gsap.utils.selector(root);
+          revealEyebrow(q('[data-eyebrow]')[0]);
+          revealChars(q('[data-tm-title]')[0], q('[data-tm-head]')[0], { delay: 0.1 });
 
-      // Before the deal: the whole deck waits face-down in the centre slot.
-      cards.current.forEach((card, i) => {
-        const slot = rel(i, START);
-        const front = slotVars(0);
-        gsap.set(card, { ...front.pos, yPercent: front.pos.yPercent + 30, opacity: 0, zIndex: SLOTS[slot].z });
-        gsap.set(poseOf(card), front.pose);
-        setBlur(card, blurOf(i), front.blur);
-      });
+          // Before the deal: the whole deck waits face-down in the centre slot.
+          cards.current.forEach((card, i) => {
+            const slot = rel(i, START);
+            const front = slotVars(0);
+            gsap.set(card, { ...front.pos, yPercent: front.pos.yPercent + 30, opacity: 0, zIndex: SLOTS[slot].z });
+            gsap.set(poseOf(card), front.pose);
+            setBlur(card, blurOf(i), front.blur);
+          });
 
-      const deal = () => {
-        const tl = gsap.timeline({
-          onComplete: () => {
-            dealt.current = true;
-            arm();
-          },
-        });
-        cards.current.forEach((card, i) => {
-          const slot = rel(i, START);
-          const { pos, pose, blur } = slotVars(slot);
-          const reduce = prefersReducedMotion();
-          const d = reduce ? 0.01 : 1.6;
-          tl.to(card, { ...pos, duration: d, ease: 'power3.out' }, Math.abs(slot) * 0.12);
-          tl.to(poseOf(card), { ...pose, duration: d, ease: 'power3.out' }, Math.abs(slot) * 0.12);
-          focusPull(tl, card, blurOf(i), blur, Math.abs(slot) * 0.12, reduce);
-        });
-        gsap.from(q('[data-tm-progress]'), { scaleX: 0, opacity: 0, duration: 1.4, ease: 'noir', delay: 0.5 });
-      };
+          const deal = () => {
+            const tl = gsap.timeline({
+              onComplete: () => {
+                dealt.current = true;
+                arm();
+              },
+            });
+            cards.current.forEach((card, i) => {
+              const slot = rel(i, START);
+              const { pos, pose, blur } = slotVars(slot);
+              const reduce = prefersReducedMotion();
+              const d = reduce ? 0.01 : 1.6;
+              tl.to(card, { ...pos, duration: d, ease: 'power3.out' }, Math.abs(slot) * 0.12);
+              tl.to(poseOf(card), { ...pose, duration: d, ease: 'power3.out' }, Math.abs(slot) * 0.12);
+              focusPull(tl, card, blurOf(i), blur, Math.abs(slot) * 0.12, reduce);
+            });
+            gsap.from(q('[data-tm-progress]'), { scaleX: 0, opacity: 0, duration: 1.4, ease: 'noir', delay: 0.5 });
+          };
 
-      ScrollTrigger.create({ trigger: stage.current, start: 'top 75%', once: true, onEnter: deal });
+          ScrollTrigger.create({ trigger: stage.current, start: 'top 75%', once: true, onEnter: deal });
 
-      // Pause autoplay while off-screen.
-      ScrollTrigger.create({
-        trigger: root.current,
-        start: 'top bottom',
-        end: 'bottom top',
-        onToggle: (self) => {
-          if (!dealt.current) return;
-          if (self.isActive && !paused.current) auto.current?.resume();
-          else auto.current?.pause();
-        },
-      });
-    },
+          // Pause autoplay while off-screen.
+          ScrollTrigger.create({
+            trigger: root.current,
+            start: 'top bottom',
+            end: 'bottom top',
+            onToggle: (self) => {
+              if (!dealt.current) return;
+              if (self.isActive && !paused.current) auto.current?.resume();
+              else auto.current?.pause();
+            },
+          });
+        }),
+      ),
     { scope: root },
   );
 

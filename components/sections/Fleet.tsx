@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
+import { whenIdle } from '@/lib/idle';
 import { gsap, useGSAP, prefersReducedMotion } from '@/lib/gsap';
 import { fleet, fleetIntro } from '@/content/site';
 import { revealChars, revealEyebrow, revealLines } from '@/components/motion/reveal';
@@ -205,61 +206,65 @@ export default function Fleet() {
   }, []);
 
   // Scroll choreography.
+  // Below the fold: set up in an idle slice after hydration (see lib/idle.ts).
   useGSAP(
-    () => {
-      const q = gsap.utils.selector(root);
-      revealEyebrow(q('[data-eyebrow]')[0], { start: 'top 75%' });
-      revealChars(q('[data-fleet-title]')[0], root.current!, { start: 'top 70%', delay: 0.1 });
-      revealLines(q('[data-fleet-body]')[0], root.current!, { start: 'top 70%', delay: 0.35 });
+    (_ctx, contextSafe) =>
+      whenIdle(
+        contextSafe!(() => {
+          const q = gsap.utils.selector(root);
+          revealEyebrow(q('[data-eyebrow]')[0], { start: 'top 75%' });
+          revealChars(q('[data-fleet-title]')[0], root.current!, { start: 'top 70%', delay: 0.1 });
+          revealLines(q('[data-fleet-body]')[0], root.current!, { start: 'top 70%', delay: 0.35 });
 
-      if (prefersReducedMotion()) return;
+          if (prefersReducedMotion()) return;
 
-      gsap.fromTo(
-        q('[data-fleet-frame]'),
-        { scale: 0.9, borderRadius: '6rem' },
-        {
-          scale: 1,
-          borderRadius: '2.4rem',
-          ease: 'none',
-          scrollTrigger: { trigger: root.current, start: 'top bottom', end: 'top 15%', scrub: true },
-        },
-      );
+          gsap.fromTo(
+            q('[data-fleet-frame]'),
+            { scale: 0.9, borderRadius: '6rem' },
+            {
+              scale: 1,
+              borderRadius: '2.4rem',
+              ease: 'none',
+              scrollTrigger: { trigger: root.current, start: 'top bottom', end: 'top 15%', scrub: true },
+            },
+          );
 
-      gsap.fromTo(
-        q('[data-fleet-land]'),
-        { yPercent: 14 },
-        {
-          yPercent: -4,
-          ease: 'none',
-          scrollTrigger: { trigger: root.current, start: 'top bottom', end: 'bottom top', scrub: true },
-        },
-      );
+          gsap.fromTo(
+            q('[data-fleet-land]'),
+            { yPercent: 14 },
+            {
+              yPercent: -4,
+              ease: 'none',
+              scrollTrigger: { trigger: root.current, start: 'top bottom', end: 'bottom top', scrub: true },
+            },
+          );
 
-      // The glow eases in once and then simply stays.
-      gsap.from(q('[data-fleet-glow]'), {
-        opacity: 0,
-        duration: 2.4,
-        ease: 'sine.inOut',
-        scrollTrigger: { trigger: root.current, start: 'top 75%', once: true },
-      });
+          // The glow eases in once and then simply stays.
+          gsap.from(q('[data-fleet-glow]'), {
+            opacity: 0,
+            duration: 2.4,
+            ease: 'sine.inOut',
+            scrollTrigger: { trigger: root.current, start: 'top 75%', once: true },
+          });
 
-      gsap.from(q('[data-card-wrap]'), {
-        yPercent: 35,
-        opacity: 0,
-        duration: 1.6,
-        ease: 'noirOut',
-        stagger: { each: 0.08, from: 'center' },
-        scrollTrigger: { trigger: root.current, start: 'top 45%', once: true },
-      });
+          gsap.from(q('[data-card-wrap]'), {
+            yPercent: 35,
+            opacity: 0,
+            duration: 1.6,
+            ease: 'noirOut',
+            stagger: { each: 0.08, from: 'center' },
+            scrollTrigger: { trigger: root.current, start: 'top 45%', once: true },
+          });
 
-      gsap.from(q('[data-fleet-ui]'), {
-        y: 30,
-        opacity: 0,
-        duration: 1.2,
-        stagger: 0.1,
-        scrollTrigger: { trigger: root.current, start: 'top 35%', once: true },
-      });
-    },
+          gsap.from(q('[data-fleet-ui]'), {
+            y: 30,
+            opacity: 0,
+            duration: 1.2,
+            stagger: 0.1,
+            scrollTrigger: { trigger: root.current, start: 'top 35%', once: true },
+          });
+        }),
+      ),
     { scope: root },
   );
 

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
+import { whenIdle } from '@/lib/idle';
 import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion } from '@/lib/gsap';
 import { steps } from '@/content/site';
 import { revealChars } from '@/components/motion/reveal';
@@ -92,54 +93,58 @@ export default function Steps() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runTimer]);
 
+  // Below the fold: set up in an idle slice after hydration (see lib/idle.ts).
   useGSAP(
-    () => {
-      const q = gsap.utils.selector(root);
-      revealChars(q('[data-steps-title]')[0], root.current!, { start: 'top 70%' });
-      if (prefersReducedMotion()) return;
+    (_ctx, contextSafe) =>
+      whenIdle(
+        contextSafe!(() => {
+          const q = gsap.utils.selector(root);
+          revealChars(q('[data-steps-title]')[0], root.current!, { start: 'top 70%' });
+          if (prefersReducedMotion()) return;
 
-      gsap.from(q('[data-step]'), {
-        y: 50,
-        opacity: 0,
-        duration: 1.2,
-        stagger: 0.12,
-        scrollTrigger: { trigger: q('[data-steps-list]')[0], start: 'top 85%', once: true },
-      });
-      gsap.from(q('[data-step-rule]'), {
-        scaleX: 0,
-        duration: 1.6,
-        ease: 'noir',
-        stagger: 0.15,
-        scrollTrigger: { trigger: q('[data-steps-list]')[0], start: 'top 85%', once: true },
-      });
-      gsap.from(q('[data-steps-slider]'), {
-        x: -40,
-        opacity: 0,
-        duration: 1.3,
-        scrollTrigger: { trigger: q('[data-steps-slider]')[0], start: 'top 95%', once: true },
-      });
+          gsap.from(q('[data-step]'), {
+            y: 50,
+            opacity: 0,
+            duration: 1.2,
+            stagger: 0.12,
+            scrollTrigger: { trigger: q('[data-steps-list]')[0], start: 'top 85%', once: true },
+          });
+          gsap.from(q('[data-step-rule]'), {
+            scaleX: 0,
+            duration: 1.6,
+            ease: 'noir',
+            stagger: 0.15,
+            scrollTrigger: { trigger: q('[data-steps-list]')[0], start: 'top 85%', once: true },
+          });
+          gsap.from(q('[data-steps-slider]'), {
+            x: -40,
+            opacity: 0,
+            duration: 1.3,
+            scrollTrigger: { trigger: q('[data-steps-slider]')[0], start: 'top 95%', once: true },
+          });
 
-      // The photograph unveils from the bottom, then drifts against the scroll.
-      gsap.fromTo(
-        q('[data-steps-media]'),
-        { clipPath: 'inset(100% 0% 0% 0% round 2.291rem)' },
-        {
-          clipPath: 'inset(0% 0% 0% 0% round 2.291rem)',
-          duration: 1.8,
-          ease: 'noir',
-          scrollTrigger: { trigger: q('[data-steps-media]')[0], start: 'top 80%', once: true },
-        },
-      );
-      gsap.fromTo(
-        q('[data-steps-parallax]'),
-        { yPercent: -7 },
-        {
-          yPercent: 7,
-          ease: 'none',
-          scrollTrigger: { trigger: root.current, start: 'top bottom', end: 'bottom top', scrub: true },
-        },
-      );
-    },
+          // The photograph unveils from the bottom, then drifts against the scroll.
+          gsap.fromTo(
+            q('[data-steps-media]'),
+            { clipPath: 'inset(100% 0% 0% 0% round 2.291rem)' },
+            {
+              clipPath: 'inset(0% 0% 0% 0% round 2.291rem)',
+              duration: 1.8,
+              ease: 'noir',
+              scrollTrigger: { trigger: q('[data-steps-media]')[0], start: 'top 80%', once: true },
+            },
+          );
+          gsap.fromTo(
+            q('[data-steps-parallax]'),
+            { yPercent: -7 },
+            {
+              yPercent: 7,
+              ease: 'none',
+              scrollTrigger: { trigger: root.current, start: 'top bottom', end: 'bottom top', scrub: true },
+            },
+          );
+        }),
+      ),
     { scope: root },
   );
 

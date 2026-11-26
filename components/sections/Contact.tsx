@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react';
 import Image from 'next/image';
+import { whenIdle } from '@/lib/idle';
 import { gsap, useGSAP, prefersReducedMotion } from '@/lib/gsap';
 import { contact, footer } from '@/content/site';
 import { revealChars, revealLines } from '@/components/motion/reveal';
@@ -16,77 +17,81 @@ export default function Contact() {
   const root = useRef<HTMLElement>(null);
   const [sent, setSent] = useState(false);
 
+  // Below the fold: set up in an idle slice after hydration (see lib/idle.ts).
   useGSAP(
-    () => {
-      const q = gsap.utils.selector(root);
-      const reduce = prefersReducedMotion();
+    (_ctx, contextSafe) =>
+      whenIdle(
+        contextSafe!(() => {
+          const q = gsap.utils.selector(root);
+          const reduce = prefersReducedMotion();
 
-      revealChars(q('[data-ct-title]')[0], q('[data-ct-left]')[0], { start: 'top 75%', delay: 0.1 });
-      revealLines(q('[data-ct-body]')[0], q('[data-ct-left]')[0], { start: 'top 75%', delay: 0.3 });
-      if (reduce) return;
+          revealChars(q('[data-ct-title]')[0], q('[data-ct-left]')[0], { start: 'top 75%', delay: 0.1 });
+          revealLines(q('[data-ct-body]')[0], q('[data-ct-left]')[0], { start: 'top 75%', delay: 0.3 });
+          if (reduce) return;
 
-      // The glow eases in once as the section arrives, then stays put.
-      gsap.from(q('[data-ct-glow]'), {
-        opacity: 0,
-        duration: 2.4,
-        ease: 'sine.inOut',
-        scrollTrigger: { trigger: root.current, start: 'top 70%', once: true },
-      });
+          // The glow eases in once as the section arrives, then stays put.
+          gsap.from(q('[data-ct-glow]'), {
+            opacity: 0,
+            duration: 2.4,
+            ease: 'sine.inOut',
+            scrollTrigger: { trigger: root.current, start: 'top 70%', once: true },
+          });
 
-      const left = gsap.timeline({ scrollTrigger: { trigger: q('[data-ct-left]')[0], start: 'top 75%', once: true } });
-      left
-        .from(q('[data-ct-eyebrow] > *'), { yPercent: 100, opacity: 0, duration: 1, stagger: 0.1 }, 0)
-        .from(q('[data-ct-rule]'), { scaleX: 0, duration: 1.4, ease: 'noir' }, 0.1)
-        .from(q('[data-ct-item]'), { x: -50, opacity: 0, duration: 1.2, stagger: 0.12 }, 0.5)
-        .from(q('[data-ct-follow]'), { y: 20, opacity: 0, duration: 1 }, 0.9)
-        .from(q('[data-ct-social]'), { scale: 0, rotate: -90, duration: 1, stagger: 0.08, ease: 'back.out(2)' }, 1);
+          const left = gsap.timeline({ scrollTrigger: { trigger: q('[data-ct-left]')[0], start: 'top 75%', once: true } });
+          left
+            .from(q('[data-ct-eyebrow] > *'), { yPercent: 100, opacity: 0, duration: 1, stagger: 0.1 }, 0)
+            .from(q('[data-ct-rule]'), { scaleX: 0, duration: 1.4, ease: 'noir' }, 0.1)
+            .from(q('[data-ct-item]'), { x: -50, opacity: 0, duration: 1.2, stagger: 0.12 }, 0.5)
+            .from(q('[data-ct-follow]'), { y: 20, opacity: 0, duration: 1 }, 0.9)
+            .from(q('[data-ct-social]'), { scale: 0, rotate: -90, duration: 1, stagger: 0.08, ease: 'back.out(2)' }, 1);
 
-      gsap
-        .timeline({ scrollTrigger: { trigger: q('[data-ct-form]')[0], start: 'top 80%', once: true } })
-        .from(q('[data-ct-form]'), { y: 120, opacity: 0, rotateX: 12, duration: 1.6, ease: 'noirOut' })
-        .from(q('[data-ct-field]'), { y: 30, opacity: 0, duration: 1, stagger: 0.08 }, 0.35);
+          gsap
+            .timeline({ scrollTrigger: { trigger: q('[data-ct-form]')[0], start: 'top 80%', once: true } })
+            .from(q('[data-ct-form]'), { y: 120, opacity: 0, rotateX: 12, duration: 1.6, ease: 'noirOut' })
+            .from(q('[data-ct-field]'), { y: 30, opacity: 0, duration: 1, stagger: 0.08 }, 0.35);
 
-      // The wordmark rises out from behind the dunes; the dunes drift slower.
-      gsap.fromTo(
-        q('[data-ct-char]'),
-        { yPercent: 85 },
-        {
-          yPercent: 0,
-          ease: 'none',
-          stagger: 0.06,
-          // Finishes as the page bottom is reached, so the letters land fully on every screen.
-          scrollTrigger: {
-            trigger: q('[data-ct-wordmark]')[0],
-            start: 'top bottom',
-            endTrigger: root.current,
-            end: 'bottom bottom',
-            scrub: 1,
-          },
-        },
-      );
-      gsap.fromTo(
-        q('[data-ct-hills]'),
-        { yPercent: 8 },
-        {
-          yPercent: 0,
-          ease: 'none',
-          // Settles exactly at the end of the page, leaving the ridge across the letters.
-          scrollTrigger: {
-            trigger: q('[data-ct-wordmark]')[0],
-            start: 'top bottom',
-            endTrigger: root.current,
-            end: 'bottom bottom',
-            scrub: true,
-          },
-        },
-      );
+          // The wordmark rises out from behind the dunes; the dunes drift slower.
+          gsap.fromTo(
+            q('[data-ct-char]'),
+            { yPercent: 85 },
+            {
+              yPercent: 0,
+              ease: 'none',
+              stagger: 0.06,
+              // Finishes as the page bottom is reached, so the letters land fully on every screen.
+              scrollTrigger: {
+                trigger: q('[data-ct-wordmark]')[0],
+                start: 'top bottom',
+                endTrigger: root.current,
+                end: 'bottom bottom',
+                scrub: 1,
+              },
+            },
+          );
+          gsap.fromTo(
+            q('[data-ct-hills]'),
+            { yPercent: 8 },
+            {
+              yPercent: 0,
+              ease: 'none',
+              // Settles exactly at the end of the page, leaving the ridge across the letters.
+              scrollTrigger: {
+                trigger: q('[data-ct-wordmark]')[0],
+                start: 'top bottom',
+                endTrigger: root.current,
+                end: 'bottom bottom',
+                scrub: true,
+              },
+            },
+          );
 
-      gsap
-        .timeline({ scrollTrigger: { trigger: q('[data-ct-footer]')[0], start: 'top 85%', once: true } })
-        .from(q('[data-ct-col]'), { y: 40, opacity: 0, duration: 1.2, stagger: 0.1 })
-        .from(q('[data-ct-base-rule]'), { scaleX: 0, duration: 1.6, ease: 'noir' }, 0.2)
-        .from(q('[data-ct-base] > p'), { y: 16, opacity: 0, duration: 1, stagger: 0.1 }, 0.5);
-    },
+          gsap
+            .timeline({ scrollTrigger: { trigger: q('[data-ct-footer]')[0], start: 'top 85%', once: true } })
+            .from(q('[data-ct-col]'), { y: 40, opacity: 0, duration: 1.2, stagger: 0.1 })
+            .from(q('[data-ct-base-rule]'), { scaleX: 0, duration: 1.6, ease: 'noir' }, 0.2)
+            .from(q('[data-ct-base] > p'), { y: 16, opacity: 0, duration: 1, stagger: 0.1 }, 0.5);
+        }),
+      ),
     { scope: root },
   );
 
